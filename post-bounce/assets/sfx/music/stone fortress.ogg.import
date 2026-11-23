@@ -2,7 +2,11 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
+<<<<<<< HEAD
 uid="uid://dpjhxm0fc4yna"
+=======
+uid="uid://btvrymtc0rgoy"
+>>>>>>> be73e618f4eb4e62c9ebc2d1f339cb6f99125579
 path="res://.godot/imported/stone fortress.ogg-4e7a1c830dd8bc761eda0ba1ddd1764a.oggvorbisstr"
 
 [deps]
