@@ -2,11 +2,7 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-<<<<<<< HEAD
 uid="uid://bc0jlbw8ds4l1"
-=======
-uid="uid://be4g4hgd22n4"
->>>>>>> be73e618f4eb4e62c9ebc2d1f339cb6f99125579
 path="res://.godot/imported/forest-stroll-mix.ogg-24ac8f0d50f92c3609b325849338b06e.oggvorbisstr"
 
 [deps]
