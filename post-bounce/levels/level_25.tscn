@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://u2u1vbphyid6"]
+
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_log2r"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_oc0c8"]
+[ext_resource type="PackedScene" uid="uid://c5q7t1nak3j2x" path="res://scenes/prefabs/wall_obstacle.tscn" id="3_nunn7"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="4_r4cim"]
+[ext_resource type="PackedScene" uid="uid://b8y2v4e6q0m1a" path="res://scenes/prefabs/tree_pine.tscn" id="5_s0tnd"]
+[ext_resource type="PackedScene" uid="uid://b1n5m7q2k8x3v" path="res://scenes/prefabs/hud.tscn" id="6_6nr8h"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 80, 130, 0, 0, 0, 0, 820, 130, 0, 0, 0, 0, 820, 520, 0, 0, 0, 0, 450, 316, 0, 0, 0, 0, 405, 345, 0, 0, 0, 0, 80, 365, 0, 0, 0, 0, 80, 130, 0, 0, 0, 0, 789, 349, 0, 0, 0, 0, 608.13403, 129.7439, 0, 0, 0, 0, 332, 115, 0, 0, 0, 0, 416, 136, 0, 0, 0, 0, 484, 4, 0, 0, 0, 0, 502, -51, 0, 0, 0, 0, 414, -35, 0, 0, 0, 0, 384, 233, 0, 0, 0, 0, 353, 227, 0, 0, 0, 0, 361, 294, 0, 0, 0, 0, 256, 251, 0, 0, 0, 0, 234, 206, 0, 0, 0, 0, 222, 197, 0, 0, 0, 0, 153, 169, 0, 0, 0, 0, 144, 148, 0, 0, 0, 0, 326, 159)
+}
+point_count = 23
+
+[node name="Course" type="Node2D" unique_id=1143172299 node_paths=PackedStringArray("boundary_path")]
+script = ExtResource("1_log2r")
+course_name = "MOONLIT FUNNEL"
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(78, 107, 818, 107, 818, 497, 448, 293, 403, 322, 78, 342, 78, 107, 787, 326, 606.13403, 106.7439, 330, 92, 414, 113, 482, -19, 500, -74, 412, -58, 382, 210, 351, 204, 359, 271, 254, 228, 232, 183, 220, 174, 151, 146, 142, 125, 324, 136)
+start_position = Vector2(108, 198)
+
+[node name="Boundary" type="Path2D" parent="." unique_id=1053509251]
+position = Vector2(-2, -23)
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=1532915526]
+position = Vector2(108, 198)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." unique_id=1548144271 instance=ExtResource("2_oc0c8")]
+point_a = Vector2(552, 482)
+point_b = Vector2(808, 482)
+
+[node name="FinishLine2" parent="FinishLine" unique_id=1001904030 instance=ExtResource("2_oc0c8")]
+position = Vector2(801.00006, 417.00003)
+rotation = -1.5214393
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1183535317]
+
+[node name="Deflector" parent="Obstacles" unique_id=223110444 instance=ExtResource("3_nunn7")]
+polygon = PackedVector2Array(410, 130, 470, 130, 470, 265, 410, 235)
+
+[node name="LowerIsland" parent="Obstacles" unique_id=233021568 instance=ExtResource("3_nunn7")]
+polygon = PackedVector2Array(570, 260, 685, 280, 650, 365, 560, 335)
+
+[node name="Diamonds" type="Node2D" parent="." unique_id=1748402533]
+
+[node name="Diamond1" parent="Diamonds" unique_id=495054406 instance=ExtResource("4_r4cim")]
+position = Vector2(325, 310)
+phase_offset = 5.178712398775415
+
+[node name="Diamond2" parent="Diamonds" unique_id=841966342 instance=ExtResource("4_r4cim")]
+position = Vector2(750, 215)
+phase_offset = 2.486320889496334
+
+[node name="Trees" type="Node2D" parent="." unique_id=1291273620]
+
+[node name="TreePine" parent="." unique_id=1280515570 instance=ExtResource("5_s0tnd")]
+position = Vector2(160, 273)
+seed_val = 20143
+
+[node name="HUD" parent="." unique_id=940281823 instance=ExtResource("6_6nr8h")]
+
+[node name="WallObstacle" parent="." unique_id=1331911805 instance=ExtResource("3_nunn7")]
+position = Vector2(770, 198)
+polygon = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
