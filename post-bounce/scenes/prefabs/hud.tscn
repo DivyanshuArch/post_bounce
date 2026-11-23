@@ -1,0 +1,211 @@
+[gd_scene format=3 uid="uid://b1n5m7q2k8x3v"]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
+bg_color = Color(0.094, 0.133, 0.11, 0.52)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.498, 0.58, 0.518, 0.34)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+expand_margin_left = 16.0
+expand_margin_top = 8.0
+expand_margin_right = 16.0
+expand_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.11, 0.153, 0.129, 0.54)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.498, 0.58, 0.518, 0.35)
+corner_radius_top_left = 19
+corner_radius_top_right = 19
+corner_radius_bottom_right = 19
+corner_radius_bottom_left = 19
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.176, 0.243, 0.204, 0.78)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.604, 0.702, 0.635, 0.6)
+corner_radius_top_left = 19
+corner_radius_top_right = 19
+corner_radius_bottom_right = 19
+corner_radius_bottom_left = 19
+
+[node name="HUD" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="RootControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopCenter" type="VBoxContainer" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 18.0
+offset_right = 150.0
+offset_bottom = 90.0
+grow_horizontal = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="ShotCounter" type="Label" parent="RootControl/TopCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.957, 0.969, 0.961, 1)
+theme_override_colors/font_shadow_color = Color(0.055, 0.078, 0.067, 0.55)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 46
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CourseLabel" type="Label" parent="RootControl/TopCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.769, 0.839, 0.792, 0.74)
+theme_override_colors/font_shadow_color = Color(0.055, 0.078, 0.067, 0.5)
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 12
+text = "COURSE 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClearBanner" type="VBoxContainer" parent="RootControl"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(200, 60)
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="ClearTitle" type="Label" parent="RootControl/ClearBanner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.957, 0.969, 0.961, 1)
+theme_override_colors/font_shadow_color = Color(0.055, 0.078, 0.067, 0.65)
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 32
+text = "COURSE CLEAR"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClearSub" type="Label" parent="RootControl/ClearBanner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.055, 0.078, 0.067, 0.65)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 15
+text = "1 SHOT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomCenter" type="HBoxContainer" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -60.0
+offset_right = 250.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+alignment = 1
+
+[node name="ControlsHint" type="PanelContainer" parent="RootControl/BottomCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hint")
+
+[node name="HintLabel" type="Label" parent="RootControl/BottomCenter/ControlsHint"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.94, 0.92, 0.76)
+theme_override_font_sizes/font_size = 13
+text = "Drag anywhere to aim & shoot  •  Bounce to the finish line  •  R to reset"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CornerControls" type="HBoxContainer" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -146.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 54.0
+grow_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="ResetButton" type="Button" parent="RootControl/CornerControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+tooltip_text = "Reset course (R)"
+theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
+text = "↺"
+
+[node name="SkipButton" type="Button" parent="RootControl/CornerControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+tooltip_text = "Skip to next course"
+theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
+text = "⏭"
+
+[node name="SoundButton" type="Button" parent="RootControl/CornerControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+tooltip_text = "Toggle sound"
+theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
+text = "🔊"
