@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://d10s4c2jpjbcy"]
+
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_61qhx"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_6u4dd"]
+[ext_resource type="PackedScene" uid="uid://b80am1k2t4p5s" path="res://scenes/prefabs/terracotta_monument.tscn" id="3_m0ecv"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="4_havpd"]
+[ext_resource type="PackedScene" uid="uid://b1nak4t7s2p8c" path="res://scenes/prefabs/chorten_monument.tscn" id="5_7jsi3"]
+[ext_resource type="PackedScene" uid="uid://cx6e7uam1b2s3" path="res://scenes/prefabs/bazaar_shop.tscn" id="6_bec02"]
+[ext_resource type="PackedScene" uid="uid://d3y8m1t4b6s2k" path="res://scenes/prefabs/torii_gate.tscn" id="7_a2aa0"]
+[ext_resource type="PackedScene" uid="uid://das8m3t1p4k7b" path="res://scenes/prefabs/shrine_lantern.tscn" id="8_216jb"]
+[ext_resource type="PackedScene" uid="uid://dg4n8s2x6v1w0" path="res://scenes/prefabs/tree_birch.tscn" id="9_urbsv"]
+[ext_resource type="PackedScene" uid="uid://c5q7t1nak3j2x" path="res://scenes/prefabs/wall_obstacle.tscn" id="10_sn6g4"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 297, -2, 0, 0, 0, 0, 786, 58, 0, 0, 0, 0, 974, 130, 0, 0, 0, 0, 988, 331, 0, 0, 0, 0, 791, 334, 0, 0, 0, 0, 561, 370, 0, 0, 0, 0, 848, 516, 0, 0, 0, 0, 837, 667, 0, 0, 0, 0, 437, 544, 0, 0, 0, 0, 353, 739, 0, 0, 0, 0, -367, 332, 0, 0, 0, 0, -252, 229, 0, 0, 0, 0, -1, 50)
+}
+point_count = 13
+
+[node name="Course2" type="Node2D" unique_id=735602100 node_paths=PackedStringArray("boundary_path")]
+script = ExtResource("1_61qhx")
+theme = "Japan Sakura"
+course_name = "CUSTOM LEVEL"
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(297, -2, 786, 58, 974, 130, 988, 331, 791, 334, 561, 370, 848, 516, 837, 667, 437, 544, 353, 739, -367, 332, -252, 229, -1, 50)
+start_position = Vector2(-291, 331)
+
+[node name="Boundary" type="Path2D" parent="." unique_id=955458842]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=949504683]
+position = Vector2(-291, 331)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." unique_id=1777726223 instance=ExtResource("2_6u4dd")]
+position = Vector2(946, 242)
+point_a = Vector2(0, -60)
+point_b = Vector2(0, 60)
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1690859444]
+
+[node name="TerracottaMonument" parent="Obstacles" unique_id=519506946 instance=ExtResource("3_m0ecv")]
+position = Vector2(-193, 321)
+
+[node name="Diamond" parent="Obstacles" unique_id=161167767 instance=ExtResource("4_havpd")]
+position = Vector2(289, 53)
+phase_offset = 0.5128920097709071
+
+[node name="ChortenMonument" parent="Obstacles" unique_id=1766895417 instance=ExtResource("5_7jsi3")]
+position = Vector2(-37, 202)
+
+[node name="ChortenMonument3" parent="Obstacles" unique_id=478876517 instance=ExtResource("5_7jsi3")]
+position = Vector2(210, 392)
+
+[node name="BazaarShop" parent="Obstacles" unique_id=1454778276 instance=ExtResource("6_bec02")]
+position = Vector2(-8, 343)
+
+[node name="BazaarShop2" parent="Obstacles" unique_id=2146458550 instance=ExtResource("6_bec02")]
+position = Vector2(200, 84)
+
+[node name="ToriiGate" parent="Obstacles" unique_id=1179966759 instance=ExtResource("7_a2aa0")]
+position = Vector2(149, 230)
+rotation = -1.5500805
+
+[node name="ShrineLantern" parent="Obstacles" unique_id=1879365327 instance=ExtResource("8_216jb")]
+position = Vector2(121, 498)
+
+[node name="TreeBirch" parent="Obstacles" unique_id=596764972 instance=ExtResource("9_urbsv")]
+position = Vector2(568, 255)
+
+[node name="ToriiGate2" parent="Obstacles" unique_id=1111059184 instance=ExtResource("7_a2aa0")]
+position = Vector2(461, 155)
+
+[node name="ChortenMonument4" parent="Obstacles" unique_id=746354334 instance=ExtResource("5_7jsi3")]
+position = Vector2(531, 431)
+
+[node name="ChortenMonument2" parent="Obstacles" unique_id=841119946 instance=ExtResource("5_7jsi3")]
+position = Vector2(380, 362)
+
+[node name="BazaarShop3" parent="Obstacles" unique_id=1850073407 instance=ExtResource("6_bec02")]
+position = Vector2(274, 255)
+
+[node name="ChortenMonument5" parent="Obstacles" unique_id=779177990 instance=ExtResource("5_7jsi3")]
+position = Vector2(326, 522)
+
+[node name="WallObstacle" parent="Obstacles" unique_id=1331911805 instance=ExtResource("10_sn6g4")]
+position = Vector2(785, 187)
+polygon = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
+
+[node name="Diamonds" type="Node2D" parent="." unique_id=276658950]
+
+[node name="Diamond2" parent="Diamonds" unique_id=1867384092 instance=ExtResource("4_havpd")]
+position = Vector2(784, 619)
+phase_offset = 5.274924752371844
+
+[node name="Diamond" parent="Diamonds" unique_id=1417298575 instance=ExtResource("4_havpd")]
+position = Vector2(798, 550)
+phase_offset = 3.8619520539188428
+
+[node name="Diamond3" parent="Diamonds" unique_id=107859005 instance=ExtResource("4_havpd")]
+position = Vector2(201, 544)
+phase_offset = 1.1198160868462819
+
+[node name="Trees" type="Node2D" parent="." unique_id=1604077865]
