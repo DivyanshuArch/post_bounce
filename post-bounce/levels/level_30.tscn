@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://i5pq1cbwyn0n"]
+
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_4n6ju"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_w2ogj"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="3_wswef"]
+[ext_resource type="PackedScene" uid="uid://das8m3t1p4k7b" path="res://scenes/prefabs/shrine_lantern.tscn" id="4_h6hrd"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 111, 186, 0, 0, 0, 0, 174, 83, 0, 0, 0, 0, 247, 53, 0, 0, 0, 0, 266, 148, 0, 0, 0, 0, 403, 353, 0, 0, 0, 0, 424, 309, 0, 0, 0, 0, 519, 237, 0, 0, 0, 0, 321, 134, 0, 0, 0, 0, 390, 74, 0, 0, 0, 0, 301, -92, 0, 0, 0, 0, 362, -96, 0, 0, 0, 0, 439, 33, 0, 0, 0, 0, 491, 5, 0, 0, 0, 0, 681, -62, 0, 0, 0, 0, 820, -138, 0, 0, 0, 0, 868, -87, 0, 0, 0, 0, 926, -27, 0, 0, 0, 0, 695, 44, 0, 0, 0, 0, 672, 71, 0, 0, 0, 0, 517, 68, 0, 0, 0, 0, 577, 199, 0, 0, 0, 0, 700, 100, 0, 0, 0, 0, 739, 206, 0, 0, 0, 0, 655, 251, 0, 0, 0, 0, 582, 285, 0, 0, 0, 0, 546, 324, 0, 0, 0, 0, 507, 366, 0, 0, 0, 0, 392, 469, 0, 0, 0, 0, 210, 216, 0, 0, 0, 0, 103, 311, 0, 0, 0, 0, 32, 248, 0, 0, 0, 0, -39, 197, 0, 0, 0, 0, -6, 91)
+}
+point_count = 33
+
+[node name="Course2" type="Node2D" unique_id=735602100 node_paths=PackedStringArray("boundary_path")]
+script = ExtResource("1_4n6ju")
+course_name = "CUSTOM LEVEL"
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(111, 186, 174, 83, 247, 53, 266, 148, 403, 353, 424, 309, 519, 237, 321, 134, 390, 74, 301, -92, 362, -96, 439, 33, 491, 5, 681, -62, 820, -138, 868, -87, 926, -27, 695, 44, 672, 71, 517, 68, 577, 199, 700, 100, 739, 206, 655, 251, 582, 285, 546, 324, 507, 366, 392, 469, 210, 216, 103, 311, 32, 248, -39, 197, -6, 91)
+start_position = Vector2(17, 174)
+
+[node name="Boundary" type="Path2D" parent="." unique_id=955458842]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=949504683]
+position = Vector2(17, 174)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." unique_id=1777726223 instance=ExtResource("2_w2ogj")]
+position = Vector2(850, -64.99997)
+rotation = 2.4497929
+point_a = Vector2(0, -60)
+point_b = Vector2(0, 60)
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1690859444]
+
+[node name="Diamonds" type="Node2D" parent="." unique_id=276658950]
+
+[node name="Diamond" parent="Diamonds" unique_id=897871573 instance=ExtResource("3_wswef")]
+position = Vector2(233, 104)
+phase_offset = 1.8165875365053636
+
+[node name="Diamond2" parent="Diamonds" unique_id=836239098 instance=ExtResource("3_wswef")]
+position = Vector2(344, -72)
+phase_offset = 5.637606346738877
+
+[node name="Diamond3" parent="Diamonds" unique_id=1780911672 instance=ExtResource("3_wswef")]
+position = Vector2(691, 173)
+phase_offset = 0.2549574330747484
+
+[node name="ShrineLantern" parent="Diamonds" unique_id=1086631454 instance=ExtResource("4_h6hrd")]
+position = Vector2(498, 85)
+
+[node name="Trees" type="Node2D" parent="." unique_id=1604077865]
