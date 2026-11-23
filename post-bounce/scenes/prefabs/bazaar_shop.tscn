@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cx6e7uam1b2s3"]
+
+[ext_resource type="Script" uid="uid://kwtlox1lxdnw" path="res://scripts/bazaar_shop.gd" id="1_shop"]
+
+[node name="BazaarShop" type="Node2D" unique_id=1454778276]
+script = ExtResource("1_shop")

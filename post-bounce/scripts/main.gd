@@ -10,6 +10,7 @@ extends Node2D
 var shots_taken: int = 0
 var course_cleared: bool = false
 var clear_timer: float = 0.0
+var is_out_of_bounds: bool = false
 
 var aim_active: bool = false
 var aim_start: Vector2 = Vector2.ZERO
@@ -38,10 +39,13 @@ func _ready() -> void:
 	ball.bounced.connect(_on_ball_bounced)
 	ball.diamond_hit.connect(_on_diamond_hit)
 	ball.finish_reached.connect(_on_finish_reached)
+	ball.out_of_bounds.connect(_on_ball_out_of_bounds)
 
 	hud.reset_requested.connect(func(): load_course(current_course_index, false))
+	hud.retry_requested.connect(func(): load_course(current_course_index, false))
 	hud.skip_requested.connect(func(): load_course(current_course_index + 1, false))
 	hud.sound_toggled.connect(_on_sound_toggled)
+
 
 	get_viewport().size_changed.connect(_on_viewport_resized)
 
@@ -51,12 +55,24 @@ func load_course(index: int, snap_cam: bool = false) -> void:
 	current_course_index = index
 	shots_taken = 0
 	course_cleared = false
+	is_out_of_bounds = false
 	clear_timer = 0.0
 	aim_active = false
 	trauma = 0.0
 	Engine.time_scale = 1.0
 
 	var level_path := "res://levels/level_%d.tscn" % (index + 1)
+	if not ResourceLoader.exists(level_path):
+		var dir := DirAccess.open("res://levels/")
+		if dir:
+			dir.list_dir_begin()
+			var fn := dir.get_next()
+			while fn != "":
+				if fn.begins_with("level_%d_" % (index + 1)) and fn.ends_with(".tscn"):
+					level_path = "res://levels/" + fn
+					break
+				fn = dir.get_next()
+
 	if ResourceLoader.exists(level_path):
 		var scene = load(level_path)
 		if scene is PackedScene:
@@ -72,9 +88,17 @@ func load_course(index: int, snap_cam: bool = false) -> void:
 		var seed_val: int = (index + 1) * 53993 + 911
 		course.setup_from_def(def, seed_val)
 
+	# Adapt background void color and atmosphere to course theme
+	var theme_colors := Palette.get_theme_colors(course.theme)
+	if has_node("World/Background"):
+		$World/Background.color = theme_colors.get("wall_void", Palette.WALL_VOID)
+	if atmosphere and atmosphere.has_method("set_theme"):
+		atmosphere.set_theme(course.theme)
+
 	ball.reset_to(course.start_position)
-	hud.update_course_info(index + 1, shots_taken)
+	hud.update_course_info(index + 1, shots_taken, false, course.course_name)
 	hud.hide_course_clear()
+	hud.hide_out_of_bounds()
 
 	_compute_camera_framing(snap_cam)
 
@@ -100,6 +124,19 @@ func _on_viewport_resized() -> void:
 	_compute_camera_framing(false)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_out_of_bounds:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			load_course(current_course_index, false)
+			get_viewport().set_input_as_handled()
+			return
+		elif event is InputEventKey and event.pressed:
+			var k: InputEventKey = event
+			if k.keycode in [KEY_R, KEY_SPACE, KEY_ENTER]:
+				load_course(current_course_index, false)
+				get_viewport().set_input_as_handled()
+				return
+		return
+
 	if event is InputEventMouseButton:
 		var mb: InputEventMouseButton = event
 		if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
@@ -110,7 +147,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		if mb.button_index == MOUSE_BUTTON_LEFT:
 			if mb.pressed:
-				if not ball.is_moving and not course_cleared:
+				if not ball.is_moving and not course_cleared and not is_out_of_bounds:
 					aim_active = true
 					aim_start = mb.position
 					aim_curr = mb.position
@@ -133,6 +170,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			aim_active = false
 			ball.set_aim_stretch(Vector2.ZERO, 0.0)
 			_update_aim_guide()
+
 
 func _update_aim_vector() -> void:
 	# Slingshot: pulling back shoots in opposite direction
@@ -168,7 +206,7 @@ func _release_shot() -> void:
 
 	ball.launch(aim_dir, launch_speed)
 	shots_taken += 1
-	hud.update_course_info(current_course_index + 1, shots_taken, true)
+	hud.update_course_info(current_course_index + 1, shots_taken, true, course.course_name)
 
 	SoundManager.play_shoot(aim_power)
 
@@ -180,7 +218,7 @@ func _release_shot() -> void:
 func _physics_process(delta: float) -> void:
 	if ball.is_moving and not course_cleared:
 		var finish_data: Dictionary = course.finish_line.get_global_segment() if is_instance_valid(course.finish_line) else {}
-		ball.step_physics(delta, course.get_all_segments(), finish_data, course.diamonds)
+		ball.step_physics(delta, course.get_all_segments(), finish_data, course.diamonds, course)
 
 func _process(delta: float) -> void:
 	# Course clear countdown
@@ -266,6 +304,21 @@ func _on_finish_reached() -> void:
 
 	hud.show_course_clear(shots_taken, collected_count)
 
+func _on_ball_out_of_bounds() -> void:
+	if course_cleared or is_out_of_bounds:
+		return
+	is_out_of_bounds = true
+	aim_active = false
+	ball.set_aim_stretch(Vector2.ZERO, 0.0)
+	_update_aim_guide()
+
+	SoundManager.play_out_of_bounds()
+	particle_manager.spawn_out_of_bounds(ball.global_position)
+	add_trauma(0.55)
+	trigger_hit_stop(0.04, 0.05)
+	hud.show_out_of_bounds("The ball fell into the void")
+
 func _on_sound_toggled() -> void:
 	var muted: bool = SoundManager.toggle_mute()
 	hud.update_sound_icon(muted)
+

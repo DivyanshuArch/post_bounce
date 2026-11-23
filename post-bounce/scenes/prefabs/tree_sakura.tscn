@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c6r8m2t4p5tak"]
+
+[ext_resource type="Script" uid="uid://c6camd7svhf2q" path="res://scripts/tree_sakura.gd" id="1_sakura"]
+
+[node name="TreeSakura" type="Node2D" unique_id=1049629225]
+script = ExtResource("1_sakura")

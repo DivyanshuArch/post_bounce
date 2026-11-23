@@ -11,6 +11,7 @@ point_count = 5
 
 [node name="Course" type="Node2D" unique_id=735602100 node_paths=PackedStringArray("boundary_path")]
 script = ExtResource("1_course")
+theme = "Moonlit Forest"
 course_name = "CUSTOM LEVEL"
 boundary_path = NodePath("Boundary")
 outer_poly = PackedVector2Array(100, 100, 700, 100, 700, 450, 100, 450)

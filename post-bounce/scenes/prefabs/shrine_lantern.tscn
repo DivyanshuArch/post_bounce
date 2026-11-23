@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://das8m3t1p4k7b"]
+
+[ext_resource type="Script" path="res://scripts/shrine_lantern.gd" id="1_lantern"]
+
+[node name="ShrineLantern" type="Node2D"]
+script = ExtResource("1_lantern")

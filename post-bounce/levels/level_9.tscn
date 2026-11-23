@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://cbcd17nr8wobi"]
+
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="3_diamond"]
+[ext_resource type="PackedScene" uid="uid://b1nak4t7s2p8c" path="res://scenes/prefabs/chorten_monument.tscn" id="4_chorten"]
+[ext_resource type="PackedScene" uid="uid://d3k7m2b4p1s8w" path="res://scenes/prefabs/prayer_flags.tscn" id="5_flags"]
+[ext_resource type="PackedScene" uid="uid://b8y2v4e6q0m1a" path="res://scenes/prefabs/tree_pine.tscn" id="6_pine"]
+[ext_resource type="PackedScene" uid="uid://dg4n8s2x6v1w0" path="res://scenes/prefabs/tree_birch.tscn" id="7_birch"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 80, 420, 0, 0, 0, 0, 380, 420, 0, 0, 0, 0, 490, 520, 0, 0, 0, 0, 880, 520, 0, 0, 0, 0, 880, 330, 0, 0, 0, 0, 620, 330, 0, 0, 0, 0, 555, 144, 0, 0, 0, 0, 220, 150, 0, 0, 0, 0, 140, 260, 0, 0, 0, 0, 80, 260, 0, 0, 0, 0, 80, 420)
+}
+point_count = 11
+
+[node name="Course" type="Node2D" unique_id=1959636407 node_paths=PackedStringArray("boundary_path")]
+script = ExtResource("1_course")
+course_name = "HIMALAYAN PASS"
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(80, 420, 380, 420, 490, 520, 880, 520, 880, 330, 620, 330, 555, 144, 220, 150, 140, 260, 80, 260)
+start_position = Vector2(150, 340)
+
+[node name="Boundary" type="Path2D" parent="." unique_id=761205034]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=388237799]
+position = Vector2(150, 340)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." unique_id=1046937690 instance=ExtResource("2_finish")]
+point_a = Vector2(840, 345)
+point_b = Vector2(840, 505)
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1486559758]
+
+[node name="Chorten1" parent="Obstacles" unique_id=2132877349 instance=ExtResource("4_chorten")]
+position = Vector2(360, 280)
+
+[node name="Chorten2" parent="Obstacles" unique_id=406141542 instance=ExtResource("4_chorten")]
+position = Vector2(690, 425)
+
+[node name="Diamonds" type="Node2D" parent="." unique_id=2125036937]
+
+[node name="Diamond1" parent="Diamonds" unique_id=1357658306 instance=ExtResource("3_diamond")]
+position = Vector2(280, 220)
+phase_offset = 0.0306177431004683
+
+[node name="Diamond2" parent="Diamonds" unique_id=454398793 instance=ExtResource("3_diamond")]
+position = Vector2(490, 220)
+phase_offset = 2.3515431129009534
+
+[node name="Diamond3" parent="Diamonds" unique_id=1555501616 instance=ExtResource("3_diamond")]
+position = Vector2(530, 440)
+phase_offset = 2.2809781241230724
+
+[node name="Trees" type="Node2D" parent="." unique_id=1733178496]
+
+[node name="PrayerFlags1" parent="Trees" unique_id=1008385493 instance=ExtResource("5_flags")]
+point_a = Vector2(230, 170)
+point_b = Vector2(420, 170)
+sag = 16.0
+flag_count = 14
+
+[node name="PrayerFlags2" parent="Trees" unique_id=1390979172 instance=ExtResource("5_flags")]
+point_a = Vector2(530, 345)
+point_b = Vector2(740, 345)
+sag = 16.0
+
+[node name="TreePine1" parent="Trees" unique_id=1053251342 instance=ExtResource("6_pine")]
+position = Vector2(120, 170)
+tree_scale = 1.1
+seed_val = 14030
+
+[node name="TreeBirch1" parent="Trees" unique_id=1305976631 instance=ExtResource("7_birch")]
+position = Vector2(610, 110)
+tree_scale = 1.0
+seed_val = 45600
+
+[node name="TreePine2" parent="Trees" unique_id=428132579 instance=ExtResource("6_pine")]
+position = Vector2(430, 480)
+tree_scale = 0.95
+seed_val = 46270

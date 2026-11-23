@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b1nak4t7s2p8c"]
+
+[ext_resource type="Script" path="res://scripts/chorten_monument.gd" id="1_chorten"]
+
+[node name="ChortenMonument" type="Node2D"]
+script = ExtResource("1_chorten")

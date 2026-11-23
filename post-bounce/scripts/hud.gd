@@ -7,6 +7,7 @@ extends CanvasLayer
 signal reset_requested()
 signal skip_requested()
 signal sound_toggled()
+signal retry_requested()
 
 @onready var shot_counter_lbl: Label = %ShotCounter
 @onready var course_label_lbl: Label = %CourseLabel
@@ -19,11 +20,35 @@ signal sound_toggled()
 @onready var skip_btn: Button = %SkipButton
 @onready var sound_btn: Button = %SoundButton
 
+@onready var retry_modal: Control = %RetryModal
+@onready var retry_modal_btn: Button = %RetryModalButton
+@onready var retry_title: Label = %RetryTitle
+@onready var retry_sub: Label = %RetrySub
+
 var has_shot_once: bool = false
+var is_retry_visible: bool = false
 
 func _ready() -> void:
 	clear_banner.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	clear_banner.scale = Vector2(0.92, 0.92)
+
+	if is_instance_valid(retry_modal):
+		retry_modal.visible = false
+		retry_modal.modulate = Color(1.0, 1.0, 1.0, 0.0)
+		retry_modal.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				SoundManager.play_ui_click()
+				hide_out_of_bounds()
+				retry_requested.emit()
+		)
+
+	if is_instance_valid(retry_modal_btn):
+		retry_modal_btn.pressed.connect(func():
+			SoundManager.play_ui_click()
+			hide_out_of_bounds()
+			retry_requested.emit()
+		)
+		retry_modal_btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
 
 	reset_btn.pressed.connect(func():
 		SoundManager.play_ui_click()
@@ -41,8 +66,41 @@ func _ready() -> void:
 	for btn in [reset_btn, skip_btn, sound_btn]:
 		btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
 
-func update_course_info(course_num: int, shots: int, animate_pop: bool = false) -> void:
-	course_label_lbl.text = "COURSE %d" % course_num
+func show_out_of_bounds(reason: String = "The ball fell into the void") -> void:
+	if not is_instance_valid(retry_modal):
+		return
+	is_retry_visible = true
+	if is_instance_valid(retry_sub):
+		retry_sub.text = reason
+
+	var card: Control = retry_modal.get_node_or_null("Card")
+	if is_instance_valid(card):
+		card.scale = Vector2(0.85, 0.85)
+
+	retry_modal.visible = true
+	var tw := create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(retry_modal, "modulate:a", 1.0, 0.28).set_trans(Tween.TRANS_SINE)
+	if is_instance_valid(card):
+		tw.tween_property(card, "scale", Vector2(1.0, 1.0), 0.34).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func hide_out_of_bounds() -> void:
+	if not is_instance_valid(retry_modal) or not is_retry_visible:
+		return
+	is_retry_visible = false
+	var tw := create_tween()
+	tw.tween_property(retry_modal, "modulate:a", 0.0, 0.18)
+	tw.chain().tween_callback(func():
+		if is_instance_valid(retry_modal):
+			retry_modal.visible = false
+	)
+
+
+func update_course_info(course_num: int, shots: int, animate_pop: bool = false, custom_name: String = "") -> void:
+	if not custom_name.is_empty():
+		course_label_lbl.text = "COURSE %d • %s" % [course_num, custom_name.to_upper()]
+	else:
+		course_label_lbl.text = "COURSE %d" % course_num
 	shot_counter_lbl.text = str(shots)
 
 	if animate_pop:

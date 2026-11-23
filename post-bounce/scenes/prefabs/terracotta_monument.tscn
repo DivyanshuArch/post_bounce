@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b80am1k2t4p5s"]
+
+[ext_resource type="Script" path="res://scripts/terracotta_monument.gd" id="1_monument"]
+
+[node name="TerracottaMonument" type="Node2D"]
+script = ExtResource("1_monument")

@@ -270,3 +270,48 @@ func play_ui_hover() -> void:
 	p.volume_db = -10.0
 	p.pitch_scale = randf_range(0.95, 1.05)
 	p.play()
+
+func play_out_of_bounds() -> void:
+	if is_muted:
+		return
+
+	# Layer imported impact click if available
+	if not impact_samples.is_empty():
+		var sfx_p := _get_free_player()
+		sfx_p.stream = impact_samples[0]
+		sfx_p.volume_db = -6.0
+		sfx_p.pitch_scale = 0.65
+		sfx_p.play()
+
+	# Synthesized descending void drone / fall
+	var duration: float = 0.52
+	var total_samples: int = int(SAMPLE_RATE * duration)
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(total_samples * 2)
+
+	var f0: float = 210.0
+	var f1: float = 48.0
+	var phase: float = 0.0
+
+	for i in range(total_samples):
+		var t: float = float(i) / float(SAMPLE_RATE)
+		var freq: float = lerpf(f0, f1, pow(t / duration, 0.7))
+		phase += freq / float(SAMPLE_RATE)
+		if phase >= 1.0:
+			phase -= 1.0
+		var raw: float = sin(phase * TAU) * 0.75 + (4.0 * absf(phase - 0.5) - 1.0) * 0.25
+		var env: float = (1.0 - (t / duration)) * exp(-2.2 * t)
+		var sample_val: int = int(clampf(raw * env * 0.42, -1.0, 1.0) * 32767.0)
+		data.encode_s16(i * 2, sample_val)
+
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = SAMPLE_RATE
+	stream.stereo = false
+	stream.data = data
+
+	var player := _get_free_player()
+	player.stream = stream
+	player.volume_db = 2.0
+	player.pitch_scale = 1.0
+	player.play()

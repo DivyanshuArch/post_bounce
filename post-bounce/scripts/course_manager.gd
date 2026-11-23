@@ -148,6 +148,7 @@ static func get_handcrafted_course(index: int) -> Dictionary:
 		# COURSE 6: MOONLIT FUNNEL
 		{
 			"name": "MOONLIT FUNNEL",
+			"theme": "Moonlit Forest",
 			"outerPoly": [
 				Vector2(80.0, 130.0),
 				Vector2(820.0, 130.0),
@@ -176,6 +177,118 @@ static func get_handcrafted_course(index: int) -> Dictionary:
 				{ "x": 325.0, "y": 310.0 },
 				{ "x": 750.0, "y": 215.0 }
 			]
+		},
+
+		# COURSE 7: NALANDA BAZAAR (Bihar Heritage)
+		{
+			"name": "NALANDA BAZAAR",
+			"theme": "Bihar Heritage",
+			"outerPoly": [
+				Vector2(80.0, 480.0),
+				Vector2(820.0, 480.0),
+				Vector2(880.0, 340.0),
+				Vector2(880.0, 120.0),
+				Vector2(620.0, 120.0),
+				Vector2(540.0, 230.0),
+				Vector2(80.0, 230.0)
+			],
+			"obstacles": [
+				[
+					Vector2(285.0, 255.0),
+					Vector2(375.0, 255.0),
+					Vector2(375.0, 305.0),
+					Vector2(285.0, 305.0)
+				],
+				[
+					Vector2(535.0, 390.0),
+					Vector2(625.0, 390.0),
+					Vector2(625.0, 440.0),
+					Vector2(535.0, 440.0)
+				]
+			],
+			"start": Vector2(170.0, 355.0),
+			"finish": { "x1": 640.0, "y1": 140.0, "x2": 860.0, "y2": 140.0 },
+			"diamonds": [
+				{ "x": 330.0, "y": 420.0 },
+				{ "x": 460.0, "y": 260.0 },
+				{ "x": 760.0, "y": 290.0 }
+			]
+		},
+
+		# COURSE 8: KYOTO SAKURA SHRINE (Japan Sakura)
+		{
+			"name": "KYOTO SAKURA SHRINE",
+			"theme": "Japan Sakura",
+			"outerPoly": [
+				Vector2(70.0, 260.0),
+				Vector2(240.0, 100.0),
+				Vector2(720.0, 100.0),
+				Vector2(880.0, 260.0),
+				Vector2(880.0, 420.0),
+				Vector2(720.0, 560.0),
+				Vector2(240.0, 560.0),
+				Vector2(70.0, 420.0)
+			],
+			"obstacles": [
+				[
+					Vector2(400.0, 332.0),
+					Vector2(418.0, 332.0),
+					Vector2(418.0, 350.0),
+					Vector2(400.0, 350.0)
+				],
+				[
+					Vector2(502.0, 332.0),
+					Vector2(520.0, 332.0),
+					Vector2(520.0, 350.0),
+					Vector2(502.0, 350.0)
+				]
+			],
+			"start": Vector2(160.0, 340.0),
+			"finish": { "x1": 810.0, "y1": 260.0, "x2": 810.0, "y2": 420.0 },
+			"diamonds": [
+				{ "x": 460.0, "y": 210.0 },
+				{ "x": 460.0, "y": 470.0 },
+				{ "x": 460.0, "y": 340.0 }
+			]
+		},
+
+		# COURSE 9: HIMALAYAN PASS (Himalayas Alpine)
+		{
+			"name": "HIMALAYAN PASS",
+			"theme": "Himalayas Alpine",
+			"outerPoly": [
+				Vector2(80.0, 420.0),
+				Vector2(380.0, 420.0),
+				Vector2(490.0, 520.0),
+				Vector2(880.0, 520.0),
+				Vector2(880.0, 330.0),
+				Vector2(620.0, 330.0),
+				Vector2(560.0, 150.0),
+				Vector2(220.0, 150.0),
+				Vector2(140.0, 260.0),
+				Vector2(80.0, 260.0)
+			],
+			"obstacles": [
+				[
+					Vector2(330.0, 250.0),
+					Vector2(390.0, 250.0),
+					Vector2(390.0, 310.0),
+					Vector2(330.0, 310.0)
+				],
+				[
+					Vector2(660.0, 395.0),
+					Vector2(720.0, 395.0),
+					Vector2(720.0, 455.0),
+					Vector2(660.0, 455.0)
+				]
+			],
+			"start": Vector2(150.0, 340.0),
+			"finish": { "x1": 840.0, "y1": 345.0, "x2": 840.0, "y2": 505.0 },
+			"diamonds": [
+				{ "x": 280.0, "y": 220.0 },
+				{ "x": 490.0, "y": 220.0 },
+				{ "x": 530.0, "y": 440.0 }
+			]
 		}
 	]
 
@@ -187,6 +300,8 @@ static func generate_procedural_course(course_num: int) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = course_num * 92821 + 1337
 	var template: int = course_num % 3
+	var theme_list: Array[String] = ["Moonlit Forest", "Bihar Heritage", "Japan Sakura", "Himalayas Alpine"]
+	var selected_theme: String = theme_list[course_num % theme_list.size()]
 
 	if template == 0:
 		var w: float = 780.0 + float(rng.randi() % 140)
@@ -284,6 +399,7 @@ static func generate_procedural_course(course_num: int) -> Dictionary:
 
 		return {
 			"name": "FOREST GLADE %d" % course_num,
+			"theme": selected_theme,
 			"outerPoly": outer_poly,
 			"obstacles": obstacles,
 			"start": start,
@@ -334,6 +450,7 @@ static func generate_procedural_course(course_num: int) -> Dictionary:
 
 		return {
 			"name": "RICOCHET CANYON %d" % course_num,
+			"theme": selected_theme,
 			"outerPoly": outer_poly,
 			"obstacles": [],
 			"start": start,
@@ -381,6 +498,7 @@ static func generate_procedural_course(course_num: int) -> Dictionary:
 
 		return {
 			"name": "MOONLIT LOOP %d" % course_num,
+			"theme": selected_theme,
 			"outerPoly": outer_poly,
 			"obstacles": obstacles,
 			"start": start,

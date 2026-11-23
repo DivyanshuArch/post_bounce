@@ -26,6 +26,41 @@ static func dist_to_polygon_edges(p: Vector2, poly: PackedVector2Array) -> float
 			min_d = d
 	return min_d
 
+static func closest_point_on_polygon(p: Vector2, poly: PackedVector2Array) -> Dictionary:
+	var min_d_sq: float = INF
+	var best_pt: Vector2 = p
+	var best_inward: Vector2 = Vector2.UP
+	var count: int = poly.size()
+	if count < 3:
+		return {"point": best_pt, "inward_normal": best_inward}
+
+	for i in range(count):
+		var a: Vector2 = poly[i]
+		var b: Vector2 = poly[(i + 1) % count]
+		var res: Dictionary = closest_point_on_segment(p, a, b)
+		var pt: Vector2 = res["point"]
+		var d_sq: float = p.distance_squared_to(pt)
+		if d_sq < min_d_sq:
+			min_d_sq = d_sq
+			best_pt = pt
+
+			var ab: Vector2 = b - a
+			var len_ab: float = ab.length()
+			if len_ab > 1e-4:
+				# If p is strictly outside, (best_pt - p) points inward into the polygon
+				var diff_in: Vector2 = pt - p
+				if diff_in.length_squared() > 1e-6:
+					best_inward = diff_in.normalized()
+				else:
+					var n1 := Vector2(-ab.y, ab.x) / len_ab
+					var mid: Vector2 = (a + b) * 0.5
+					if Geometry2D.is_point_in_polygon(mid + n1 * 4.0, poly):
+						best_inward = n1
+					else:
+						best_inward = -n1
+
+	return {"point": best_pt, "inward_normal": best_inward}
+
 static func make_jagged_polygon(rng: RandomNumberGenerator, sides: int, rx: float, ry: float, jitter: float = 0.2, rot: float = 0.0) -> PackedVector2Array:
 	var pts: PackedVector2Array = PackedVector2Array()
 	for i in range(sides):

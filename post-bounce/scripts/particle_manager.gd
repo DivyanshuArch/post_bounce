@@ -128,7 +128,41 @@ func spawn_finish_celebration(pos: Vector2) -> void:
 		})
 	queue_redraw()
 
+func spawn_out_of_bounds(pos: Vector2) -> void:
+	spawn_floating_text(pos, "OUT OF BOUNDS", Color("#fb7185"))
+	rings.append({
+		"pos": pos,
+		"radius": 8.0,
+		"max_radius": 56.0,
+		"life": 0.5,
+		"max_life": 0.5,
+		"color": Color("#f43f5e")
+	})
+	rings.append({
+		"pos": pos,
+		"radius": 4.0,
+		"max_radius": 36.0,
+		"life": 0.4,
+		"max_life": 0.4,
+		"color": Color("#fbbf24")
+	})
+	for i in range(20):
+		var ang: float = randf() * TAU
+		var spd: float = 30.0 + randf() * 120.0
+		var col: Color = Color("#fb7185") if (i % 3 == 0) else (Color("#fbbf24") if (i % 3 == 1) else Color("#94a3b8"))
+		particles.append({
+			"pos": pos,
+			"vel": Vector2(cos(ang) * spd, sin(ang) * spd),
+			"life": 0.35 + randf() * 0.35,
+			"max_life": 0.7,
+			"size": 2.0 + randf() * 2.8,
+			"color": col,
+			"shape": "circle"
+		})
+	queue_redraw()
+
 func _draw() -> void:
+
 	# Draw rings
 	for r in rings:
 		var alpha: float = (r["life"] / r["max_life"]) * 0.65

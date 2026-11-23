@@ -5,6 +5,11 @@ extends Node2D
 ## Raised cliff island obstacle with drop shadow, inner ridge facet, and contour outline.
 ## Marked @tool so it renders live in the Godot 2D editor.
 
+@export_enum("Inherit", "Moonlit Forest", "Bihar Heritage", "Japan Sakura", "Himalayas Alpine") var theme: String = "Inherit":
+	set(val):
+		theme = val
+		queue_redraw()
+
 @export var polygon: PackedVector2Array = [
 	Vector2(-50.0, -50.0),
 	Vector2(50.0, -50.0),
@@ -16,6 +21,16 @@ extends Node2D
 		queue_redraw()
 
 var segment_flashes: Array[float] = []
+
+func get_effective_theme() -> String:
+	if theme != "Inherit":
+		return theme
+	var p := get_parent()
+	while p:
+		if "theme" in p:
+			return p.theme
+		p = p.get_parent()
+	return "Moonlit Forest"
 
 func _ready() -> void:
 	segment_flashes.resize(polygon.size())
@@ -62,14 +77,20 @@ func _draw() -> void:
 		segment_flashes.resize(count)
 		segment_flashes.fill(0.0)
 
+	var theme_colors := Palette.get_theme_colors(get_effective_theme())
+	var wall_void: Color = theme_colors.get("wall_void", Palette.WALL_VOID)
+	var wall_ridge: Color = theme_colors.get("wall_ridge_mid", Palette.WALL_RIDGE_MID)
+	var line_col: Color = theme_colors.get("contour_line", Palette.CONTOUR_LINE)
+	var flash_col: Color = theme_colors.get("contour_flash", Palette.CONTOUR_FLASH)
+
 	# 1. Ground drop shadow
 	var shadow_pts: PackedVector2Array = PackedVector2Array()
 	for p: Vector2 in polygon:
 		shadow_pts.append(p + Vector2(7.0, 9.0))
 	draw_colored_polygon(shadow_pts, Palette.SHADOW)
 
-	# 2. Dark slate-green cliff body
-	draw_colored_polygon(polygon, Palette.WALL_VOID)
+	# 2. Wall cliff body
+	draw_colored_polygon(polygon, wall_void)
 
 	# 3. Subtle raised inner facet
 	var center := Vector2.ZERO
@@ -81,16 +102,16 @@ func _draw() -> void:
 	for p: Vector2 in polygon:
 		var shifted := center.lerp(p, 0.72) + Vector2(-2.0, -2.5)
 		inner_pts.append(shifted)
-	draw_colored_polygon(inner_pts, Palette.WALL_RIDGE_MID)
+	draw_colored_polygon(inner_pts, wall_ridge)
 	var loop_inner := inner_pts.duplicate()
 	loop_inner.append(inner_pts[0])
-	draw_polyline(loop_inner, Color(0.498, 0.58, 0.518, 0.35), 1.0, true)
+	draw_polyline(loop_inner, Color(line_col.r, line_col.g, line_col.b, 0.35), 1.0, true)
 
-	# 4. Sage contour line per segment (with hit flash)
+	# 4. Contour line per segment (with hit flash)
 	for i in range(count):
 		var a: Vector2 = polygon[i]
 		var b: Vector2 = polygon[(i + 1) % count]
 		var flash_val: float = segment_flashes[i] if i < segment_flashes.size() else 0.0
-		var col: Color = Palette.CONTOUR_FLASH if flash_val > 0.02 else Palette.CONTOUR_LINE
+		var col: Color = flash_col if flash_val > 0.02 else line_col
 		var width: float = 2.4 + flash_val * 1.8 if flash_val > 0.02 else 2.2
 		draw_line(a, b, col, width, true)

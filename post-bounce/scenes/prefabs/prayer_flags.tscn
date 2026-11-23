@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d3k7m2b4p1s8w"]
+
+[ext_resource type="Script" path="res://scripts/prayer_flags.gd" id="1_flags"]
+
+[node name="PrayerFlags" type="Node2D"]
+script = ExtResource("1_flags")

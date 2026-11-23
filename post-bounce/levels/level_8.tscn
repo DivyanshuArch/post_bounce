@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://baac16ns5vxir"]
+
+[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/diamond.tscn" id="3_diamond"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/torii_gate.tscn" id="4_torii"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shrine_lantern.tscn" id="5_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/tree_sakura.tscn" id="6_sakura"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 70, 260, 0, 0, 0, 0, 240, 100, 0, 0, 0, 0, 720, 100, 0, 0, 0, 0, 880, 260, 0, 0, 0, 0, 880, 420, 0, 0, 0, 0, 720, 560, 0, 0, 0, 0, 240, 560, 0, 0, 0, 0, 70, 420, 0, 0, 0, 0, 70, 260)
+}
+point_count = 9
+
+[node name="Course" type="Node2D"]
+script = ExtResource("1_course")
+theme = "Japan Sakura"
+course_name = "KYOTO SAKURA SHRINE"
+outer_poly = PackedVector2Array(70, 260, 240, 100, 720, 100, 880, 260, 880, 420, 720, 560, 240, 560, 70, 420)
+start_position = Vector2(160, 340)
+
+[node name="Boundary" type="Path2D" parent="."]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="."]
+position = Vector2(160, 340)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." instance=ExtResource("2_finish")]
+point_a = Vector2(810, 260)
+point_b = Vector2(810, 420)
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="ToriiGate1" parent="Obstacles" instance=ExtResource("4_torii")]
+position = Vector2(460, 340)
+gate_width = 120.0
+
+[node name="ShrineLantern1" parent="Obstacles" instance=ExtResource("5_lantern")]
+position = Vector2(330, 210)
+lantern_radius = 22.0
+
+[node name="ShrineLantern2" parent="Obstacles" instance=ExtResource("5_lantern")]
+position = Vector2(330, 470)
+lantern_radius = 22.0
+
+[node name="ShrineLantern3" parent="Obstacles" instance=ExtResource("5_lantern")]
+position = Vector2(630, 210)
+lantern_radius = 22.0
+
+[node name="ShrineLantern4" parent="Obstacles" instance=ExtResource("5_lantern")]
+position = Vector2(630, 470)
+lantern_radius = 22.0
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="Diamond1" parent="Diamonds" instance=ExtResource("3_diamond")]
+position = Vector2(460, 210)
+
+[node name="Diamond2" parent="Diamonds" instance=ExtResource("3_diamond")]
+position = Vector2(460, 470)
+
+[node name="Diamond3" parent="Diamonds" instance=ExtResource("3_diamond")]
+position = Vector2(460, 340)
+
+[node name="Trees" type="Node2D" parent="."]
+
+[node name="TreeSakura1" parent="Trees" instance=ExtResource("6_sakura")]
+position = Vector2(120, 140)
+tree_scale = 1.15
+
+[node name="TreeSakura2" parent="Trees" instance=ExtResource("6_sakura")]
+position = Vector2(120, 520)
+tree_scale = 1.15
+
+[node name="TreeSakura3" parent="Trees" instance=ExtResource("6_sakura")]
+position = Vector2(790, 140)
+tree_scale = 1.15
+
+[node name="TreeSakura4" parent="Trees" instance=ExtResource("6_sakura")]
+position = Vector2(790, 520)
+tree_scale = 1.15

@@ -8,15 +8,59 @@ var clouds: Array[Dictionary] = []
 var wisps: Array[Dictionary] = []
 var birds: Array[Dictionary] = []
 var fireflies: Array[Dictionary] = []
+var theme_particles: Array[Dictionary] = []
 
 var time_elapsed: float = 0.0
 var camera_offset: Vector2 = Vector2.ZERO
+var current_theme: String = "Moonlit Forest"
 
 @onready var visual: Control = $Visual
+@onready var vignette_rect: ColorRect = $Vignette if has_node("Vignette") else null
+
+func set_theme(theme_name: String) -> void:
+	current_theme = theme_name
+	var theme_colors := Palette.get_theme_colors(theme_name)
+	if vignette_rect and vignette_rect.material is ShaderMaterial:
+		var mat := vignette_rect.material as ShaderMaterial
+		var vig_col: Color = theme_colors.get("vignette", Color(0.047, 0.071, 0.059, 0.44))
+		mat.set_shader_parameter("vignette_color", vig_col)
+
+		match theme_name:
+			"Bihar Heritage":
+				mat.set_shader_parameter("moon_color", Color(1.0, 0.82, 0.55, 0.18))
+			"Japan Sakura":
+				mat.set_shader_parameter("moon_color", Color(1.0, 0.78, 0.88, 0.18))
+			"Himalayas Alpine":
+				mat.set_shader_parameter("moon_color", Color(0.72, 0.88, 1.0, 0.18))
+			_:
+				mat.set_shader_parameter("moon_color", Color(0.91, 0.89, 0.83, 0.08))
+
+	_init_theme_particles()
+	if visual:
+		visual.queue_redraw()
+
+func _init_theme_particles() -> void:
+	theme_particles.clear()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 98127 + int(abs(hash(current_theme)))
+
+	var count: int = 36
+	for i in range(count):
+		theme_particles.append({
+			"pos": Vector2(rng.randf() * 1600.0 - 100.0, rng.randf() * 1000.0 - 50.0),
+			"vel": Vector2(18.0 + rng.randf() * 26.0, 24.0 + rng.randf() * 30.0),
+			"size": 3.0 + rng.randf() * 3.5,
+			"rot": rng.randf() * TAU,
+			"rot_speed": (rng.randf() - 0.5) * 3.5,
+			"sway_phase": rng.randf() * TAU,
+			"opacity": 0.45 + rng.randf() * 0.45
+		})
 
 func _ready() -> void:
 	if visual:
 		visual.draw.connect(_on_visual_draw)
+
+	_init_theme_particles()
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77123
@@ -118,6 +162,19 @@ func update_atmosphere(delta: float, cam_offset: Vector2) -> void:
 		if f["pos"].y < -20.0: f["pos"].y = vp_size.y + 20.0
 		if f["pos"].y > vp_size.y + 20.0: f["pos"].y = -20.0
 
+	# 5. Themed atmospheric particles (sakura, embers, snowflakes)
+	for p in theme_particles:
+		p["sway_phase"] += delta * 2.2
+		var sway_x: float = sin(p["sway_phase"]) * 14.0 * delta
+		p["pos"].x += (p["vel"].x + sway_x) * delta
+		p["pos"].y += p["vel"].y * delta
+		p["rot"] += p["rot_speed"] * delta
+		if p["pos"].y > wrap_h + 30.0:
+			p["pos"].y = -30.0
+			p["pos"].x = randf() * wrap_w
+		if p["pos"].x > wrap_w + 30.0:
+			p["pos"].x = -20.0
+
 	visual.queue_redraw()
 
 func draw_atmosphere(ctrl: Control) -> void:
@@ -162,12 +219,56 @@ func draw_atmosphere(ctrl: Control) -> void:
 		var p_right := xf * Vector2(-s, s * 0.7 - wing_y)
 		ctrl.draw_polyline([p_left, p_mid, p_right], Palette.BIRD, 1.5, true)
 
-	# 4. Drifting green-yellow firefly specks
+	# 4. Drifting themed firefly specks
+	var firefly_base: Color = Palette.FIREFLY
+	match current_theme:
+		"Bihar Heritage":
+			firefly_base = Color(0.98, 0.76, 0.25)
+		"Japan Sakura":
+			firefly_base = Color(0.98, 0.65, 0.8)
+		"Himalayas Alpine":
+			firefly_base = Color(0.55, 0.85, 0.98)
+
 	for f in fireflies:
 		var twinkle: float = 0.18 + 0.58 * (0.5 + 0.5 * sin(f["phase"]))
-		var col := Color(Palette.FIREFLY.r, Palette.FIREFLY.g, Palette.FIREFLY.b, twinkle)
+		var col := Color(firefly_base.r, firefly_base.g, firefly_base.b, twinkle)
 		var s: float = f["size"]
 		ctrl.draw_rect(Rect2(f["pos"].x, f["pos"].y, s, s), col)
+
+	# 5. Themed ambient particles
+	match current_theme:
+		"Japan Sakura":
+			# Floating pink cherry blossom petals
+			var petal_col1 := Color(0.98, 0.75, 0.84)
+			var petal_col2 := Color(0.94, 0.52, 0.68)
+			for p in theme_particles:
+				var sp: Vector2 = p["pos"] + par * 0.8
+				var col: Color = petal_col1 if int(p["size"] * 10) % 2 == 0 else petal_col2
+				col.a = p["opacity"]
+				var s: float = p["size"]
+				var rot: float = p["rot"]
+				var cos_r: float = cos(rot)
+				var sin_r: float = sin(rot)
+				var pts: PackedVector2Array = [
+					sp + Vector2(-s * 0.6 * cos_r, -s * sin_r),
+					sp + Vector2(s * cos_r, s * 0.35 * sin_r),
+					sp + Vector2(-s * 0.25 * cos_r, s * 0.85 * sin_r)
+				]
+				ctrl.draw_colored_polygon(pts, col)
+
+		"Bihar Heritage":
+			# Drifting warm golden marigold petals and diya sparks
+			for p in theme_particles:
+				var sp: Vector2 = p["pos"] + par * 0.8
+				var col: Color = Color(0.98, 0.68, 0.22, p["opacity"] * 0.85) if int(p["size"] * 10) % 2 == 0 else Color(0.92, 0.32, 0.18, p["opacity"] * 0.75)
+				ctrl.draw_circle(sp, p["size"] * 0.55, col)
+
+		"Himalayas Alpine":
+			# Soft fluttering snowflakes
+			for p in theme_particles:
+				var sp: Vector2 = p["pos"] + par * 0.8
+				var col := Color(0.92, 0.96, 1.0, p["opacity"] * 0.78)
+				ctrl.draw_circle(sp, p["size"] * 0.48, col)
 
 func _on_visual_draw() -> void:
 	if visual:

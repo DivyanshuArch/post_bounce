@@ -7,6 +7,14 @@ extends Node2D
 ## Marked @tool so that levels and level_template render with FULL visual preview
 ## in the Godot 2D editor!
 
+@export_enum("Moonlit Forest", "Bihar Heritage", "Japan Sakura", "Himalayas Alpine") var theme: String = "Moonlit Forest":
+	set(val):
+		theme = val
+		if Engine.is_editor_hint():
+			var seed_int: int = int(abs(hash(course_name))) & 0x7FFFFFFF
+			generate_decorations(seed_int if seed_int != 0 else 12345)
+			queue_redraw()
+
 @export var course_name: String = "MOONLIT BEND":
 	set(val):
 		course_name = val
@@ -58,7 +66,7 @@ var grass_tufts: Array[Dictionary] = []
 var flowers: Array[Dictionary] = []
 var ridge_decor: Array[Dictionary] = []
 
-var obstacles: Array[WallObstacle] = []
+var obstacles: Array[Node2D] = []
 var diamonds: Array[Diamond] = []
 var finish_line: FinishLine = null
 var trees: Array[Node2D] = []
@@ -91,7 +99,7 @@ func _ready() -> void:
 	if has_node("Obstacles"):
 		obstacles.clear()
 		for child in $Obstacles.get_children():
-			if child is WallObstacle:
+			if child.has_method("get_global_segments"):
 				obstacles.append(child)
 
 	if has_node("Diamonds"):
@@ -202,6 +210,8 @@ func _build_outer_segments() -> void:
 
 func setup_from_def(def: Dictionary, seed_val: int) -> void:
 	course_name = def["name"]
+	if def.has("theme"):
+		theme = def["theme"]
 	outer_poly = PackedVector2Array(def["outerPoly"])
 	start_position = def["start"]
 	_compute_bounds()
@@ -258,9 +268,15 @@ func generate_decorations(seed_val: int) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_val
 
+	var theme_colors := Palette.get_theme_colors(theme)
+	var facet_colors: Array = theme_colors.get("facets", [Palette.FLOOR_FACET_A, Palette.FLOOR_FACET_B, Palette.FLOOR_FACET_DARK])
+	var flower_colors: Array = theme_colors.get("flowers", [Palette.FLOWER_WHITE, Palette.FLOWER_YELLOW, Palette.FLOWER_LAVENDER])
+	var grass_colors: Array = theme_colors.get("grass", [Palette.GRASS_BLADE_1, Palette.GRASS_BLADE_2])
+	var ridge_mid: Color = theme_colors.get("wall_ridge_mid", Palette.WALL_RIDGE_MID)
+	var ridge_top: Color = theme_colors.get("wall_ridge_top", Palette.WALL_RIDGE_TOP)
+
 	# 1. Low-poly floor facets
 	floor_facets.clear()
-	var facet_colors: Array[Color] = [Palette.FLOOR_FACET_A, Palette.FLOOR_FACET_B, Palette.FLOOR_FACET_DARK]
 	for i in range(16):
 		var fx: float = bounds.position.x + rng.randf() * bounds.size.x
 		var fy: float = bounds.position.y + rng.randf() * bounds.size.y
@@ -273,7 +289,6 @@ func generate_decorations(seed_val: int) -> void:
 	# 2. Edge flora
 	grass_tufts.clear()
 	flowers.clear()
-	var flower_colors: Array[Color] = [Palette.FLOWER_WHITE, Palette.FLOWER_YELLOW, Palette.FLOWER_LAVENDER]
 
 	for i in range(160):
 		var px: float = bounds.position.x + rng.randf() * bounds.size.x
@@ -284,7 +299,7 @@ func generate_decorations(seed_val: int) -> void:
 
 		var inside_obs: bool = false
 		for obs in obstacles:
-			if is_instance_valid(obs) and GeometryUtils.point_in_polygon(p, obs.polygon):
+			if is_instance_valid(obs) and "polygon" in obs and GeometryUtils.point_in_polygon(p, obs.polygon):
 				inside_obs = true
 				break
 		if inside_obs:
@@ -292,7 +307,7 @@ func generate_decorations(seed_val: int) -> void:
 
 		var edge_dist: float = GeometryUtils.dist_to_polygon_edges(p, outer_poly)
 		for obs in obstacles:
-			if is_instance_valid(obs):
+			if is_instance_valid(obs) and "polygon" in obs:
 				var od: float = GeometryUtils.dist_to_polygon_edges(p, obs.polygon)
 				if od < edge_dist:
 					edge_dist = od
@@ -310,7 +325,7 @@ func generate_decorations(seed_val: int) -> void:
 				grass_tufts.append({
 					"pos": p,
 					"blades": blades,
-					"color": Palette.GRASS_BLADE_1 if rng.randf() > 0.5 else Palette.GRASS_BLADE_2,
+					"color": grass_colors[rng.randi() % grass_colors.size()],
 					"phase": rng.randf() * TAU
 				})
 			else:
@@ -331,7 +346,7 @@ func generate_decorations(seed_val: int) -> void:
 		ridge_decor.append({
 			"pos": rp,
 			"pts": GeometryUtils.make_jagged_polygon(rng, 6 + rng.randi() % 3, 90.0 + rng.randf() * 120.0, 70.0 + rng.randf() * 100.0, 0.28, rng.randf() * PI),
-			"color": Palette.WALL_RIDGE_MID if rng.randf() > 0.5 else Palette.WALL_RIDGE_TOP
+			"color": ridge_mid if rng.randf() > 0.5 else ridge_top
 		})
 
 	# 4. Generate trees if container has none placed and not in editor
@@ -372,15 +387,15 @@ func get_all_segments() -> Array:
 	for i in range(outer_segments.size()):
 		var seg = outer_segments[i]
 		list.append({
-			"a": seg["a"],
-			"b": seg["b"],
+			"a": to_global(seg["a"]),
+			"b": to_global(seg["b"]),
 			"flash": outer_flashes[i],
 			"is_outer": true,
 			"outer_idx": i,
 			"course": self
 		})
 	for obs in obstacles:
-		if is_instance_valid(obs):
+		if is_instance_valid(obs) and obs.has_method("get_global_segments"):
 			list.append_array(obs.get_global_segments())
 	return list
 
@@ -390,7 +405,7 @@ func trigger_segment_flash(seg: Dictionary) -> void:
 		if idx >= 0 and idx < outer_flashes.size():
 			outer_flashes[idx] = 1.0
 			queue_redraw()
-	elif seg.has("obstacle") and is_instance_valid(seg["obstacle"]):
+	elif seg.has("obstacle") and is_instance_valid(seg["obstacle"]) and seg["obstacle"].has_method("trigger_flash"):
 		seg["obstacle"].trigger_flash(seg["seg_idx"])
 
 func _process(delta: float) -> void:
@@ -413,6 +428,11 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 func _draw() -> void:
+	var theme_colors := Palette.get_theme_colors(theme)
+	var floor_col: Color = theme_colors.get("floor_base", Palette.FLOOR_BASE)
+	var line_col: Color = theme_colors.get("contour_line", Palette.CONTOUR_LINE)
+	var flash_col: Color = theme_colors.get("contour_flash", Palette.CONTOUR_FLASH)
+
 	# 1. Background ridge decor facets
 	for rd in ridge_decor:
 		var pts: PackedVector2Array = PackedVector2Array()
@@ -423,7 +443,7 @@ func _draw() -> void:
 
 	# 2. Corridor floor
 	if not outer_poly.is_empty() and outer_poly.size() >= 3:
-		draw_colored_polygon(outer_poly, Palette.FLOOR_BASE)
+		draw_colored_polygon(outer_poly, floor_col)
 
 		# Ground low-poly facets
 		for facet in floor_facets:
@@ -462,7 +482,7 @@ func _draw() -> void:
 			var a: Vector2 = outer_poly[i]
 			var b: Vector2 = outer_poly[(i + 1) % count]
 			var f_val: float = outer_flashes[i] if i < outer_flashes.size() else 0.0
-			var col: Color = Palette.CONTOUR_FLASH if f_val > 0.02 else Palette.CONTOUR_LINE
+			var col: Color = flash_col if f_val > 0.02 else line_col
 			var width: float = 2.4 + f_val * 1.8 if f_val > 0.02 else 2.2
 			draw_line(a, b, col, width, true)
 
