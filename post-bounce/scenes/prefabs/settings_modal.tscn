@@ -1,0 +1,290 @@
+[gd_scene format=3 uid="uid://cx4m8k10an3p2"]
+
+[ext_resource type="Script" path="res://scripts/settings_modal.gd" id="1_sett"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.118, 0.165, 0.137, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.54, 0.46, 0.6)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.03, 0.05, 0.04, 0.65)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_outline"]
+bg_color = Color(0.14, 0.19, 0.16, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.65, 0.55, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.2, 0.28, 0.23, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.68, 0.82, 0.72, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_bg"]
+bg_color = Color(0.18, 0.24, 0.2, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_top = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
+bg_color = Color(0.68, 0.84, 0.72, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_top = 3.0
+expand_margin_bottom = 3.0
+
+[node name="SettingsModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sett")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.043, 0.067, 0.055, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelCard" type="PanelContainer" parent="CenterContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(560, 480)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/PanelCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="ContentVBox" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 36)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "← CLOSE"
+
+[node name="Title" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.96, 0.94, 1)
+theme_override_constants/letter_spacing = 3
+theme_override_font_sizes/font_size = 24
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="AudioSection" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AudioLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.87, 0.9)
+theme_override_font_sizes/font_size = 15
+text = "AUDIO"
+
+[node name="SfxRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="SfxLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/SfxRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "🔊 SOUND FX"
+
+[node name="SfxSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/SfxRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
+value = 100.0
+
+[node name="MusicRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="MusicLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/MusicRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎵 MUSIC"
+
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/MusicRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
+value = 80.0
+
+[node name="ControlsSection" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ControlsLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.87, 0.9)
+theme_override_font_sizes/font_size = 15
+text = "CONTROLS"
+
+[node name="SensRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="SensLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/SensRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎯 AIM SENSITIVITY"
+
+[node name="SensitivitySlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/SensRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
+min_value = 25.0
+max_value = 200.0
+value = 100.0
+
+[node name="TrajRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TrajLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "📐 TRAJECTORY LINE"
+
+[node name="TrajButtonGroup" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TrajFullBtn" type="Button" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow/TrajButtonGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "FULL"
+
+[node name="TrajShortBtn" type="Button" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow/TrajButtonGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "SHORT"
+
+[node name="TrajOffBtn" type="Button" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow/TrajButtonGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "OFF"
+
+[node name="GameplaySection" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GameplayLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/GameplaySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.87, 0.9)
+theme_override_font_sizes/font_size = 15
+text = "GAMEPLAY"
+
+[node name="ShakeRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/GameplaySection"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ShakeLabel" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/GameplaySection/ShakeRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "⛶ SCREEN SHAKE"
+
+[node name="ShakeToggle" type="CheckButton" parent="CenterContainer/PanelCard/Margin/ContentVBox/GameplaySection/ShakeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="ApplyBtn" type="Button" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.98, 0.95, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "APPLY"

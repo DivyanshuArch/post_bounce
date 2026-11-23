@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b2n4m8y6k1v3x"]
 
-[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
-[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1v9" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
 
 [sub_resource type="Curve2D" id="Curve2D_boundary"]
 _data = {
@@ -9,16 +9,18 @@ _data = {
 }
 point_count = 8
 
-[node name="Course" type="Node2D"]
+[node name="Course" type="Node2D" unique_id=443585903 node_paths=PackedStringArray("boundary_path")]
 script = ExtResource("1_course")
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(100, 400, 640, 400, 760, 280, 760, 90, 560, 90, 560, 240, 100, 240)
 
-[node name="Boundary" type="Path2D" parent="."]
+[node name="Boundary" type="Path2D" parent="." unique_id=506140051]
 curve = SubResource("Curve2D_boundary")
 
-[node name="Obstacles" type="Node2D" parent="."]
+[node name="Obstacles" type="Node2D" parent="." unique_id=1470824171]
 
-[node name="Diamonds" type="Node2D" parent="."]
+[node name="Diamonds" type="Node2D" parent="." unique_id=661521743]
 
-[node name="Trees" type="Node2D" parent="."]
+[node name="Trees" type="Node2D" parent="." unique_id=1292103651]
 
-[node name="FinishLine" parent="." instance=ExtResource("2_finish")]
+[node name="FinishLine" parent="." unique_id=1323903121 instance=ExtResource("2_finish")]

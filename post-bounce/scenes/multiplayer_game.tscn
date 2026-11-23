@@ -1,0 +1,464 @@
+[gd_scene format=3 uid="uid://dnax4k2y1n8p7"]
+
+[ext_resource type="Script" path="res://scripts/multiplayer_game.gd" id="1_mpgame"]
+[ext_resource type="Script" path="res://scripts/aim_guide.gd" id="2_aim"]
+[ext_resource type="Script" path="res://scripts/particle_manager.gd" id="3_parts"]
+[ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="4_atmo"]
+[ext_resource type="AudioStream" path="res://assets/sfx/music/forest-stroll-mix.ogg" id="5_music"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_card"]
+bg_color = Color(0.118, 0.165, 0.137, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.55, 0.46, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_winner"]
+bg_color = Color(0.106, 0.153, 0.125, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.98, 0.89, 0.4, 0.85)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.04, 0.07, 0.05, 0.75)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_waiting"]
+bg_color = Color(0.11, 0.165, 0.135, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.85, 0.65, 0.8)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.04, 0.07, 0.05, 0.65)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_score_row"]
+bg_color = Color(0.15, 0.21, 0.17, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toast"]
+bg_color = Color(0.14, 0.22, 0.17, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.85, 0.6, 0.7)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_primary"]
+bg_color = Color(0.933, 0.961, 0.937, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_outline"]
+bg_color = Color(0.14, 0.19, 0.16, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.65, 0.55, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="MultiplayerGame" type="Node2D"]
+script = ExtResource("1_mpgame")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_left = -3000.0
+offset_top = -3000.0
+offset_right = 5000.0
+offset_bottom = 5000.0
+mouse_filter = 2
+color = Color(0.129, 0.173, 0.149, 1)
+
+[node name="AimGuide" type="Node2D" parent="World"]
+script = ExtResource("2_aim")
+
+[node name="ParticleManager" type="Node2D" parent="World"]
+script = ExtResource("3_parts")
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(400, 300)
+
+[node name="Atmosphere" parent="." instance=ExtResource("4_atmo")]
+
+[node name="MultiplayerHUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="TopHUD" type="HBoxContainer" parent="MultiplayerHUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 74.0
+grow_horizontal = 2
+theme_override_constants/separation = 16
+
+[node name="P1Card" type="PanelContainer" parent="MultiplayerHUD/TopHUD"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_card")
+
+[node name="P1Margin" type="MarginContainer" parent="MultiplayerHUD/TopHUD/P1Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 8
+
+[node name="P1VBox" type="VBoxContainer" parent="MultiplayerHUD/TopHUD/P1Card/P1Margin"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="P1Header" type="HBoxContainer" parent="MultiplayerHUD/TopHUD/P1Card/P1Margin/P1VBox"]
+layout_mode = 2
+
+[node name="P1NameLabel" type="Label" parent="MultiplayerHUD/TopHUD/P1Card/P1Margin/P1VBox/P1Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.53, 0.87, 0.67, 1)
+theme_override_font_sizes/font_size = 13
+text = "👑 Host"
+
+[node name="P1StatusLabel" type="Label" parent="MultiplayerHUD/TopHUD/P1Card/P1Margin/P1VBox/P1Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 11
+text = "PLAYING"
+
+[node name="P1ShotsLabel" type="Label" parent="MultiplayerHUD/TopHUD/P1Card/P1Margin/P1VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 14
+text = "0 SHOTS  •  0 ★"
+
+[node name="CenterBox" type="VBoxContainer" parent="MultiplayerHUD/TopHUD"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="CourseTitleLabel" type="Label" parent="MultiplayerHUD/TopHUD/CenterBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.94, 0.9, 0.9)
+theme_override_constants/letter_spacing = 3
+theme_override_font_sizes/font_size = 16
+text = "HOLE 1"
+horizontal_alignment = 1
+
+[node name="ModeTag" type="Label" parent="MultiplayerHUD/TopHUD/CenterBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.74, 0.66, 0.75)
+theme_override_font_sizes/font_size = 11
+text = "DUAL RICOCHET"
+horizontal_alignment = 1
+
+[node name="P2Card" type="PanelContainer" parent="MultiplayerHUD/TopHUD"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_card")
+
+[node name="P2Margin" type="MarginContainer" parent="MultiplayerHUD/TopHUD/P2Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 8
+
+[node name="P2VBox" type="VBoxContainer" parent="MultiplayerHUD/TopHUD/P2Card/P2Margin"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="P2Header" type="HBoxContainer" parent="MultiplayerHUD/TopHUD/P2Card/P2Margin/P2VBox"]
+layout_mode = 2
+
+[node name="P2NameLabel" type="Label" parent="MultiplayerHUD/TopHUD/P2Card/P2Margin/P2VBox/P2Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.98, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎮 Player 2"
+
+[node name="P2StatusLabel" type="Label" parent="MultiplayerHUD/TopHUD/P2Card/P2Margin/P2VBox/P2Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 11
+text = "PLAYING"
+
+[node name="P2ShotsLabel" type="Label" parent="MultiplayerHUD/TopHUD/P2Card/P2Margin/P2VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="ToastBanner" type="PanelContainer" parent="MultiplayerHUD"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 84.0
+offset_right = 180.0
+offset_bottom = 120.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_toast")
+
+[node name="ToastMargin" type="MarginContainer" parent="MultiplayerHUD/ToastBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="ToastLabel" type="Label" parent="MultiplayerHUD/ToastBanner/ToastMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.98, 0.94, 1)
+theme_override_font_sizes/font_size = 12
+text = "Opponent has completed the hole!"
+horizontal_alignment = 1
+
+[node name="WaitingBanner" type="PanelContainer" parent="MultiplayerHUD"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -140.0
+offset_right = 250.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_waiting")
+
+[node name="WaitingMargin" type="MarginContainer" parent="MultiplayerHUD/WaitingBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="WaitingVBox" type="VBoxContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="WaitingTitleLabel" type="Label" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.92, 0.65, 1)
+theme_override_constants/letter_spacing = 2
+theme_override_font_sizes/font_size = 18
+text = "🏁 HOLE COMPLETED!"
+horizontal_alignment = 1
+
+[node name="WaitingSubtitleLabel" type="Label" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.94, 0.9, 0.9)
+theme_override_font_sizes/font_size = 13
+text = "You finished in 3 shots with 2 stars!"
+horizontal_alignment = 1
+
+[node name="WaitingScoresBox" type="VBoxContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WaitingP1Card" type="PanelContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_score_row")
+
+[node name="Margin" type="MarginContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox/WaitingP1Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="WaitingP1Label" type="Label" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox/WaitingP1Card/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.96, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "👑 Player 1: 3 Shots • 2 ★ (FINISHED 🏁)"
+
+[node name="WaitingP2Card" type="PanelContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_score_row")
+
+[node name="Margin" type="MarginContainer" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox/WaitingP2Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="WaitingP2Label" type="Label" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox/WaitingScoresBox/WaitingP2Card/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.88, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎮 Player 2: 2 Shots • 1 ★ (PLAYING...)"
+
+[node name="WaitingStatusLabel" type="Label" parent="MultiplayerHUD/WaitingBanner/WaitingMargin/WaitingVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.82, 0.74, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "⏳ Waiting for opponent to finish hole..."
+horizontal_alignment = 1
+
+[node name="WinnerBanner" type="PanelContainer" parent="MultiplayerHUD"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -180.0
+offset_right = 280.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_winner")
+
+[node name="WinnerMargin" type="MarginContainer" parent="MultiplayerHUD/WinnerBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="WinnerVBox" type="VBoxContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="WinnerTextLabel" type="Label" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_constants/letter_spacing = 2
+theme_override_font_sizes/font_size = 20
+text = "🏆 PLAYER 1 WINS THE HOLE!"
+horizontal_alignment = 1
+
+[node name="WinnerSubLabel" type="Label" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.88, 0.82, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "Fewest strokes to complete the hole"
+horizontal_alignment = 1
+
+[node name="WinnerScoresBox" type="VBoxContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WinnerP1Card" type="PanelContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_score_row")
+
+[node name="Margin" type="MarginContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox/WinnerP1Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 6
+
+[node name="WinnerP1Label" type="Label" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox/WinnerP1Card/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.96, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "👑 Player 1: 3 Shots • 2 ★  [WINNER 🏆]"
+
+[node name="WinnerP2Card" type="PanelContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_score_row")
+
+[node name="Margin" type="MarginContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox/WinnerP2Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 6
+
+[node name="WinnerP2Label" type="Label" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/WinnerScoresBox/WinnerP2Card/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.88, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎮 Player 2: 5 Shots • 1 ★"
+
+[node name="MatchScoreLabel" type="Label" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.86, 0.78, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "Match Score: Player 1 (1)  —  Player 2 (0)"
+horizontal_alignment = 1
+
+[node name="BannerBtnBox" type="HBoxContainer" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="NextCourseButton" type="Button" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/BannerBtnBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.17, 0.14, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
+text = "NEXT HOLE ▶"
+
+[node name="LeaveMatchButton" type="Button" parent="MultiplayerHUD/WinnerBanner/WinnerMargin/WinnerVBox/BannerBtnBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+text = "LEAVE MATCH"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_music")
+autoplay = true

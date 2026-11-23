@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://b1n5m7q2k8x3v"]
 
-[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://67ulxmcutobo" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" uid="uid://dp8tmlr1eaf8s" path="res://assets/icons/icon_reset.svg" id="2_reset"]
+[ext_resource type="Texture2D" uid="uid://do1hniydjdq34" path="res://assets/icons/icon_skip.svg" id="3_skip"]
+[ext_resource type="Texture2D" uid="uid://db3qq5m2dd2ip" path="res://assets/icons/icon_sound_on.svg" id="4_sound"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 bg_color = Color(0.094, 0.133, 0.11, 0.52)
@@ -62,7 +65,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(1.0, 0.55, 0.55, 0.7)
+border_color = Color(1, 0.55, 0.55, 0.7)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -74,17 +77,17 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(1.0, 0.8, 0.8, 0.9)
+border_color = Color(1, 0.8, 0.8, 0.9)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=80446484]
 layer = 10
 script = ExtResource("1_hud")
 
-[node name="RootControl" type="Control" parent="."]
+[node name="RootControl" type="Control" parent="." unique_id=707158637]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,7 +96,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopCenter" type="VBoxContainer" parent="RootControl"]
+[node name="TopCenter" type="VBoxContainer" parent="RootControl" unique_id=1921888841]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -106,7 +109,7 @@ grow_horizontal = 2
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="ShotCounter" type="Label" parent="RootControl/TopCenter"]
+[node name="ShotCounter" type="Label" parent="RootControl/TopCenter" unique_id=813389881]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.957, 0.969, 0.961, 1)
@@ -117,7 +120,7 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CourseLabel" type="Label" parent="RootControl/TopCenter"]
+[node name="CourseLabel" type="Label" parent="RootControl/TopCenter" unique_id=254808746]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.769, 0.839, 0.792, 0.74)
@@ -128,7 +131,7 @@ text = "COURSE 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ClearBanner" type="VBoxContainer" parent="RootControl"]
+[node name="ClearBanner" type="VBoxContainer" parent="RootControl" unique_id=1263127649]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -147,7 +150,7 @@ mouse_filter = 2
 theme_override_constants/separation = 6
 alignment = 1
 
-[node name="ClearTitle" type="Label" parent="RootControl/ClearBanner"]
+[node name="ClearTitle" type="Label" parent="RootControl/ClearBanner" unique_id=2076057647]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.957, 0.969, 0.961, 1)
@@ -158,7 +161,7 @@ text = "COURSE CLEAR"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ClearSub" type="Label" parent="RootControl/ClearBanner"]
+[node name="ClearSub" type="Label" parent="RootControl/ClearBanner" unique_id=1162146021]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
@@ -169,7 +172,7 @@ text = "1 SHOT"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BottomCenter" type="HBoxContainer" parent="RootControl"]
+[node name="BottomCenter" type="HBoxContainer" parent="RootControl" unique_id=1548840084]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -185,13 +188,13 @@ grow_vertical = 0
 mouse_filter = 2
 alignment = 1
 
-[node name="ControlsHint" type="PanelContainer" parent="RootControl/BottomCenter"]
+[node name="ControlsHint" type="PanelContainer" parent="RootControl/BottomCenter" unique_id=352229718]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hint")
 
-[node name="HintLabel" type="Label" parent="RootControl/BottomCenter/ControlsHint"]
+[node name="HintLabel" type="Label" parent="RootControl/BottomCenter/ControlsHint" unique_id=1044714070]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.94, 0.92, 0.76)
 theme_override_font_sizes/font_size = 13
@@ -199,7 +202,7 @@ text = "Drag anywhere to aim & shoot  •  Bounce to the finish line  •  R to 
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CornerControls" type="HBoxContainer" parent="RootControl"]
+[node name="CornerControls" type="HBoxContainer" parent="RootControl" unique_id=1546521740]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -212,7 +215,7 @@ grow_horizontal = 0
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="ResetButton" type="Button" parent="RootControl/CornerControls"]
+[node name="ResetButton" type="Button" parent="RootControl/CornerControls" unique_id=946313175]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
@@ -220,11 +223,12 @@ tooltip_text = "Reset course (R)"
 theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
-text = "↺"
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+icon = ExtResource("2_reset")
+flat = true
 
-[node name="SkipButton" type="Button" parent="RootControl/CornerControls"]
+[node name="SkipButton" type="Button" parent="RootControl/CornerControls" unique_id=42598185]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
@@ -232,11 +236,12 @@ tooltip_text = "Skip to next course"
 theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
-text = "⏭"
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+icon = ExtResource("3_skip")
+flat = true
 
-[node name="SoundButton" type="Button" parent="RootControl/CornerControls"]
+[node name="SoundButton" type="Button" parent="RootControl/CornerControls" unique_id=478195445]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
@@ -244,11 +249,12 @@ tooltip_text = "Toggle sound"
 theme_override_colors/font_color = Color(0.9, 0.93, 0.91, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
-text = "🔊"
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+icon = ExtResource("4_sound")
+flat = true
 
-[node name="RetryModal" type="Control" parent="RootControl"]
+[node name="RetryModal" type="Control" parent="RootControl" unique_id=2047144042]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -258,7 +264,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Dimmer" type="ColorRect" parent="RootControl/RetryModal"]
+[node name="Dimmer" type="ColorRect" parent="RootControl/RetryModal" unique_id=1016750304]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -267,7 +273,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.04, 0.06, 0.07, 0.75)
 
-[node name="Card" type="PanelContainer" parent="RootControl/RetryModal"]
+[node name="Card" type="PanelContainer" parent="RootControl/RetryModal" unique_id=1728833324]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -283,26 +289,26 @@ grow_vertical = 2
 pivot_offset = Vector2(160, 110)
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal_bg")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/RetryModal/Card"]
+[node name="Margin" type="MarginContainer" parent="RootControl/RetryModal/Card" unique_id=1337256168]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 20
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/RetryModal/Card/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/RetryModal/Card/Margin" unique_id=2008280012]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="WarningIcon" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox"]
+[node name="WarningIcon" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1329456460]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.45, 0.45, 1)
 theme_override_font_sizes/font_size = 28
 text = "✦"
 horizontal_alignment = 1
 
-[node name="RetryTitle" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox"]
+[node name="RetryTitle" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1259401348]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.95, 0.95, 1)
@@ -312,7 +318,7 @@ theme_override_font_sizes/font_size = 22
 text = "OUT OF BOUNDS"
 horizontal_alignment = 1
 
-[node name="RetrySub" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox"]
+[node name="RetrySub" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1039370699]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.82, 0.78, 0.85)
@@ -320,7 +326,7 @@ theme_override_font_sizes/font_size = 13
 text = "The ball fell into the void"
 horizontal_alignment = 1
 
-[node name="RetryModalButton" type="Button" parent="RootControl/RetryModal/Card/Margin/VBox"]
+[node name="RetryModalButton" type="Button" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1250473133]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 40)
 layout_mode = 2
@@ -329,14 +335,13 @@ focus_mode = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_retry_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_retry_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_retry_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_retry_btn_hover")
 text = "↺  TRY AGAIN"
 
-[node name="RetryHint" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox"]
+[node name="RetryHint" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1846127655]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.68, 0.64, 0.65)
 theme_override_font_sizes/font_size = 11
 text = "Press R or Space to retry"
 horizontal_alignment = 1
-

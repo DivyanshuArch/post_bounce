@@ -10,7 +10,7 @@
 
 [sub_resource type="Curve2D" id="Curve2D_boundary"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 80, 420, 0, 0, 0, 0, 380, 420, 0, 0, 0, 0, 490, 520, 0, 0, 0, 0, 880, 520, 0, 0, 0, 0, 880, 330, 0, 0, 0, 0, 620, 330, 0, 0, 0, 0, 555, 144, 0, 0, 0, 0, 220, 150, 0, 0, 0, 0, 140, 260, 0, 0, 0, 0, 80, 260, 0, 0, 0, 0, 80, 420)
+"points": PackedVector2Array(0, 0, 0, 0, 80, 420, 0, 0, 0, 0, 448, 350, 0, 0, 0, 0, 490, 520, 0, 0, 0, 0, 880, 520, 0, 0, 0, 0, 880, 330, 0, 0, 0, 0, 540, 307, 0, 0, 0, 0, 651, 162, 0, 0, 0, 0, 220, 150, 0, 0, 0, 0, 140, 260, 0, 0, 0, 0, 80, 260, 0, 0, 0, 0, 80, 420)
 }
 point_count = 11
 
@@ -18,7 +18,7 @@ point_count = 11
 script = ExtResource("1_course")
 course_name = "HIMALAYAN PASS"
 boundary_path = NodePath("Boundary")
-outer_poly = PackedVector2Array(80, 420, 380, 420, 490, 520, 880, 520, 880, 330, 620, 330, 555, 144, 220, 150, 140, 260, 80, 260)
+outer_poly = PackedVector2Array(80, 420, 448, 350, 490, 520, 880, 520, 880, 330, 540, 307, 651, 162, 220, 150, 140, 260, 80, 260)
 start_position = Vector2(150, 340)
 
 [node name="Boundary" type="Path2D" parent="." unique_id=761205034]

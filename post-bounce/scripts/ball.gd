@@ -361,6 +361,8 @@ func step_physics(delta: float, segments: Array, finish_data: Dictionary, diamon
 			var cf: Vector2 = cf_res["point"]
 			var fin_dist: float = radius + 7.0
 			if global_position.distance_squared_to(cf) < fin_dist * fin_dist:
+				is_moving = false
+				velocity = Vector2.ZERO
 				finish_reached.emit()
 				break
 

@@ -1,0 +1,265 @@
+[gd_scene format=3 uid="uid://dm7k1y8p4v2n3"]
+
+[ext_resource type="Script" uid="uid://n3sy1ijd7loe" path="res://scripts/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="2_atmo"]
+[ext_resource type="PackedScene" uid="uid://cx4m8k10an3p2" path="res://scenes/prefabs/settings_modal.tscn" id="3_sett"]
+[ext_resource type="PackedScene" uid="uid://b8y1v2k4m7x3p" path="res://scenes/prefabs/help_modal.tscn" id="4_help"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icon_btn"]
+bg_color = Color(0.118, 0.165, 0.137, 0.5)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.55, 0.46, 0.45)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icon_btn_hover"]
+bg_color = Color(0.19, 0.26, 0.22, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.68, 0.82, 0.72, 0.8)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary"]
+bg_color = Color(0.933, 0.961, 0.937, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.04, 0.07, 0.05, 0.3)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary_hover"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.04, 0.07, 0.05, 0.45)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_sec"]
+bg_color = Color(0.118, 0.165, 0.137, 0.75)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.55, 0.46, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_sec_hover"]
+bg_color = Color(0.18, 0.25, 0.21, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.65, 0.8, 0.7, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="MainMenu" type="Control" unique_id=267175854]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=361859732]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129, 0.173, 0.149, 1)
+
+[node name="Atmosphere" parent="." unique_id=1701845730 instance=ExtResource("2_atmo")]
+
+[node name="TopRightBar" type="HBoxContainer" parent="." unique_id=1561849568]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 22.0
+offset_right = -26.0
+offset_bottom = 60.0
+grow_horizontal = 0
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="HelpIconButton" type="Button" parent="TopRightBar" unique_id=1416624509]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 0.85)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_icon_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_icon_btn_hover")
+text = "?"
+
+[node name="SoundIconButton" type="Button" parent="TopRightBar" unique_id=1938612937]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 0.85)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_icon_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_icon_btn_hover")
+text = "🔊"
+
+[node name="GearIconButton" type="Button" parent="TopRightBar" unique_id=1519216459]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 0.85)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_icon_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_icon_btn_hover")
+text = "⚙"
+
+[node name="CenterBox" type="VBoxContainer" parent="." unique_id=931153012]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -180.0
+offset_right = 220.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterBox" unique_id=579999226]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.96, 0.94, 1)
+theme_override_colors/font_shadow_color = Color(0.04, 0.07, 0.05, 0.55)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 48
+text = "POST BOUNCE"
+horizontal_alignment = 1
+
+[node name="LogoVisual" type="Control" parent="CenterBox" unique_id=217663623]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Spacer" type="Control" parent="CenterBox" unique_id=852994141]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterBox" unique_id=1765756710]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="StartButton" type="Button" parent="CenterBox/ButtonsVBox" unique_id=1210998857]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.12, 0.17, 0.14, 1)
+theme_override_colors/font_hover_color = Color(0.08, 0.12, 0.1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_primary_hover")
+text = "START GAME "
+
+[node name="MultiplayerButton" type="Button" parent="CenterBox/ButtonsVBox" unique_id=1938971865]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(250, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.93, 0.88, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sec")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_sec_hover")
+text = "MULTIPLAYER 👥"
+
+[node name="SettingsButton" type="Button" parent="CenterBox/ButtonsVBox" unique_id=1249074923]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.93, 0.88, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sec")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_sec_hover")
+text = "SETTINGS "
+
+[node name="VersionLabel" type="Label" parent="." unique_id=1682265860]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -42.0
+offset_right = 110.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.48, 0.6, 0.52, 0.6)
+theme_override_font_sizes/font_size = 14
+text = "v1.0"
+
+[node name="BestScoreContainer" type="HBoxContainer" parent="." unique_id=792810957]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -42.0
+offset_right = -28.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="StarIcon" type="Label" parent="BestScoreContainer" unique_id=709706801]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 0.75)
+theme_override_font_sizes/font_size = 15
+text = "★"
+
+[node name="BestScoreLabel" type="Label" parent="BestScoreContainer" unique_id=794637381]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.68, 0.59, 0.75)
+theme_override_font_sizes/font_size = 14
+text = "BEST SCORE: 1,420"
+
+[node name="SettingsModal" parent="." unique_id=477938426 instance=ExtResource("3_sett")]
+visible = false
+layout_mode = 1
+
+[node name="HelpModal" parent="." unique_id=1380725022 instance=ExtResource("4_help")]
+visible = false
+layout_mode = 1

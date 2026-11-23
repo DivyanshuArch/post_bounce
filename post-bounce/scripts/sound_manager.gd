@@ -65,11 +65,25 @@ func _ready() -> void:
 	if ResourceLoader.exists(rel_path):
 		release_sound = load(rel_path)
 
+var sfx_volume: float = 1.0
+var music_volume: float = 0.8
+
 func _get_free_player() -> AudioStreamPlayer:
 	for p in audio_players:
 		if not p.playing:
 			return p
 	return audio_players[0]
+
+func update_volume_settings(p_sfx: float, p_music: float, p_muted: bool) -> void:
+	sfx_volume = clampf(p_sfx, 0.0, 1.0)
+	music_volume = clampf(p_music, 0.0, 1.0)
+	is_muted = p_muted
+	if is_instance_valid(music_player):
+		music_player.stream_paused = is_muted
+		if music_volume <= 0.001:
+			music_player.volume_db = -80.0
+		else:
+			music_player.volume_db = linear_to_db(music_volume) - 12.0
 
 func toggle_mute() -> bool:
 	is_muted = not is_muted

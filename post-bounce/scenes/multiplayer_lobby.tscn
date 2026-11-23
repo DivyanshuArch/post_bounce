@@ -1,0 +1,432 @@
+[gd_scene format=3 uid="uid://b2n8k4y7m1p3x"]
+
+[ext_resource type="Script" path="res://scripts/multiplayer_lobby.gd" id="1_lobby"]
+[ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="2_atmo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.118, 0.165, 0.137, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.55, 0.46, 0.55)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
+bg_color = Color(0.16, 0.22, 0.18, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.5, 0.42, 0.5)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_outline"]
+bg_color = Color(0.14, 0.19, 0.16, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.65, 0.55, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.2, 0.28, 0.23, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.68, 0.82, 0.72, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_primary"]
+bg_color = Color(0.933, 0.961, 0.937, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_primary_hover"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="MultiplayerLobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129, 0.173, 0.149, 1)
+
+[node name="Atmosphere" parent="." instance=ExtResource("2_atmo")]
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 32.0
+offset_top = 22.0
+offset_right = -32.0
+offset_bottom = 66.0
+grow_horizontal = 2
+theme_override_constants/separation = 16
+
+[node name="BackButton" type="Button" parent="TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "← BACK"
+
+[node name="TitleBox" type="VBoxContainer" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="TopBar/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.97, 0.95, 1)
+theme_override_constants/letter_spacing = 3
+theme_override_font_sizes/font_size = 20
+text = "MULTIPLAYER ROOMS"
+
+[node name="Subtitle" type="Label" parent="TopBar/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.78, 0.72, 0.75)
+theme_override_font_sizes/font_size = 12
+text = "Enter the same room to play together — match starts automatically!"
+
+[node name="PlayerNameBox" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NameTag" type="Label" parent="TopBar/PlayerNameBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.84, 0.78, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "YOUR NAME:"
+
+[node name="PlayerNameInput" type="LineEdit" parent="TopBar/PlayerNameBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 34)
+layout_mode = 2
+text = "Player"
+
+[node name="BackendBadge" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "⚡ PHOTON FUSION CONNECTED"
+
+[node name="MainLayout" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -220.0
+offset_right = 480.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+
+[node name="JoinCard" type="PanelContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="MainLayout/JoinCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/JoinCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="JoinHeader" type="Label" parent="MainLayout/JoinCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_constants/letter_spacing = 2
+theme_override_font_sizes/font_size = 16
+text = "JOIN OR CREATE ROOM"
+
+[node name="RoomNameLabel" type="Label" parent="MainLayout/JoinCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.84, 0.78, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "Room Name / Code:"
+
+[node name="RoomNameInput" type="LineEdit" parent="MainLayout/JoinCard/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "Room-1"
+placeholder_text = "e.g. Room-1, Moonlit, Arena..."
+
+[node name="JoinRoomButton" type="Button" parent="MainLayout/JoinCard/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.17, 0.14, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
+text = "JOIN OR CREATE ROOM 🚪"
+
+[node name="QuickMatchButton" type="Button" parent="MainLayout/JoinCard/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.96, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "QUICK MATCH ⚡"
+
+[node name="Spacer" type="Control" parent="MainLayout/JoinCard/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RuleHint" type="Label" parent="MainLayout/JoinCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.82, 0.74, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "⚡ Instant Auto-Start:\nGive this Room Name to a friend. The game begins automatically the second they enter!"
+autowrap_mode = 2
+
+[node name="RoomsCard" type="PanelContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="MainLayout/RoomsCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/RoomsCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="RoomsHeaderRow" type="HBoxContainer" parent="MainLayout/RoomsCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="RoomsHeader" type="Label" parent="MainLayout/RoomsCard/Margin/VBox/RoomsHeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
+theme_override_constants/letter_spacing = 2
+theme_override_font_sizes/font_size = 16
+text = "ACTIVE ROOMS"
+
+[node name="RefreshButton" type="Button" parent="MainLayout/RoomsCard/Margin/VBox/RoomsHeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(85, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "REFRESH ⟳"
+
+[node name="ScrollRooms" type="ScrollContainer" parent="MainLayout/RoomsCard/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RoomListContainer" type="VBoxContainer" parent="MainLayout/RoomsCard/Margin/VBox/ScrollRooms"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="RoomPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -200.0
+offset_right = 340.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="RoomPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="VBox" type="VBoxContainer" parent="RoomPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RoomTitleLabel" type="Label" parent="RoomPanel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.98, 0.95, 1)
+theme_override_constants/letter_spacing = 2
+theme_override_font_sizes/font_size = 20
+text = "ROOM: Room-1"
+horizontal_alignment = 1
+
+[node name="RoomInfoLabel" type="Label" parent="RoomPanel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.82, 0.75, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Waiting for Player 2 to join..."
+horizontal_alignment = 1
+
+[node name="SlotsBox" type="VBoxContainer" parent="RoomPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Slot1Card" type="PanelContainer" parent="RoomPanel/Margin/VBox/SlotsBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Slot1Margin" type="MarginContainer" parent="RoomPanel/Margin/VBox/SlotsBox/Slot1Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="Slot1HBox" type="HBoxContainer" parent="RoomPanel/Margin/VBox/SlotsBox/Slot1Card/Slot1Margin"]
+layout_mode = 2
+
+[node name="Slot1Label" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot1Card/Slot1Margin/Slot1HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.95, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "👑 Player 1"
+
+[node name="Slot1Status" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot1Card/Slot1Margin/Slot1HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "IN ROOM 🟢"
+
+[node name="Slot2Card" type="PanelContainer" parent="RoomPanel/Margin/VBox/SlotsBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Slot2Margin" type="MarginContainer" parent="RoomPanel/Margin/VBox/SlotsBox/Slot2Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="Slot2HBox" type="HBoxContainer" parent="RoomPanel/Margin/VBox/SlotsBox/Slot2Card/Slot2Margin"]
+layout_mode = 2
+
+[node name="Slot2Label" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot2Card/Slot2Margin/Slot2HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.85, 0.9, 0.88, 1)
+theme_override_font_sizes/font_size = 14
+text = "🎮 Waiting for opponent to join..."
+
+[node name="Slot2Status" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot2Card/Slot2Margin/Slot2HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "WAITING ⏳"
+
+[node name="AutoStartBanner" type="Label" parent="RoomPanel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.95, 0.88, 1)
+theme_override_constants/letter_spacing = 1
+theme_override_font_sizes/font_size = 13
+text = "⚡ As soon as another player joins this room, the game starts automatically!"
+horizontal_alignment = 1
+
+[node name="LeaveRoomButton" type="Button" parent="RoomPanel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.88, 0.7, 0.7, 0.9)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "LEAVE ROOM"
+
+[node name="StatusPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -54.0
+offset_right = -32.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="StatusMargin" type="MarginContainer" parent="StatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="StatusLabel" type="Label" parent="StatusPanel/StatusMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.78, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "Select or enter a room."
+vertical_alignment = 1
