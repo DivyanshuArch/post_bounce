@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://dkq38wajccny0"]
+
+[ext_resource type="PackedScene" uid="uid://c1k8v5m3kax2t" path="res://levels/level_template.tscn" id="1_632g6"]
+[ext_resource type="PackedScene" uid="uid://cx6e7uam1b2s3" path="res://scenes/prefabs/bazaar_shop.tscn" id="2_wgwa0"]
+[ext_resource type="PackedScene" uid="uid://b1nak4t7s2p8c" path="res://scenes/prefabs/chorten_monument.tscn" id="3_qkjnl"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="4_f5ee1"]
+[ext_resource type="PackedScene" uid="uid://d3k7m2b4p1s8w" path="res://scenes/prefabs/prayer_flags.tscn" id="5_bsgh0"]
+[ext_resource type="PackedScene" uid="uid://b80am1k2t4p5s" path="res://scenes/prefabs/terracotta_monument.tscn" id="6_td1at"]
+[ext_resource type="PackedScene" uid="uid://d3y8m1t4b6s2k" path="res://scenes/prefabs/torii_gate.tscn" id="7_4wlfg"]
+
+[node name="Course2" unique_id=735602100 instance=ExtResource("1_632g6")]
+theme = "Himalayas Alpine"
+outer_poly = PackedVector2Array(168, 228, 355, 104, 135, 19, 392, 19, 414, 44, 449, 83, 392, 101, 352, 182, 517, 260, 439, 33, 491, 5, 564, 247, 617, 231, 620, 310, 655, 182, 700, 100, 679, 221, 739, 206, 1121, 493, 798, 510, 696, 322, 700, 450, 614, 509, 568, 407, 460, 445, 476, 364, 429, 360, 279, 206, 392, 469, 203, 313, 100, 450, 186, 278, -39, 294, 93, 5)
+start_position = Vector2(923, 393)
+
+[node name="StartPoint" parent="." index="1" unique_id=949504683]
+position = Vector2(923, 393)
+
+[node name="FinishLine" parent="." index="2" unique_id=1777726223]
+position = Vector2(342.99997, 40)
+rotation = 1.6964903
+
+[node name="BazaarShop" parent="." index="6" unique_id=1454778276 instance=ExtResource("2_wgwa0")]
+position = Vector2(743, 274)
+
+[node name="ChortenMonument" parent="." index="7" unique_id=1752725993 instance=ExtResource("3_qkjnl")]
+position = Vector2(552, 362)
+
+[node name="Diamond" parent="." index="8" unique_id=902482196 instance=ExtResource("4_f5ee1")]
+position = Vector2(511, 138)
+phase_offset = 2.5195351688215295
+
+[node name="Diamond2" parent="." index="9" unique_id=422977337 instance=ExtResource("4_f5ee1")]
+position = Vector2(85, 227)
+phase_offset = 2.1042387075426707
+
+[node name="PrayerFlags" parent="." index="10" unique_id=1391292144 instance=ExtResource("5_bsgh0")]
+position = Vector2(220, 241)
+
+[node name="TerracottaMonument" parent="." index="11" unique_id=402269640 instance=ExtResource("6_td1at")]
+position = Vector2(442, 309)
+
+[node name="ToriiGate" parent="." index="12" unique_id=1649374436 instance=ExtResource("7_4wlfg")]
+position = Vector2(379, 213)
+rotation = 0.49883735

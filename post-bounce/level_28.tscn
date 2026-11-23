@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://qug1s3bo64oe"]
+
+[ext_resource type="Script" uid="uid://b46ots13hhet1" path="res://scripts/course.gd" id="1_l5h32"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1wa" path="res://scenes/prefabs/finish_line.tscn" id="2_547ft"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="3_0eqxv"]
+[ext_resource type="PackedScene" uid="uid://b1n5m7q2k8x3v" path="res://scenes/prefabs/hud.tscn" id="4_8dm2a"]
+[ext_resource type="PackedScene" uid="uid://d3y8m1t4b6s2k" path="res://scenes/prefabs/torii_gate.tscn" id="5_v2103"]
+[ext_resource type="PackedScene" uid="uid://b8y2v4e6q0m1a" path="res://scenes/prefabs/tree_pine.tscn" id="6_0kwh6"]
+[ext_resource type="PackedScene" uid="uid://b80am1k2t4p5s" path="res://scenes/prefabs/terracotta_monument.tscn" id="7_547ft"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 189, 108, 0, 0, 0, 0, 328, 96, 0, 0, 0, 0, 135, 19, 0, 0, 0, 0, 389, -178, 0, 0, 0, 0, 1032, -40, 0, 0, 0, 0, 688, 38, 0, 0, 0, 0, 417, 40, 0, 0, 0, 0, 362, 108, 0, 0, 0, 0, 352, 182, 0, 0, 0, 0, 517, 260, 0, 0, 0, 0, 439, 33, 0, 0, 0, 0, 541, 32, 0, 0, 0, 0, 551.14026, 219.2343, 0, 0, 0, 0, 520, 260, 0, 0, 0, 0, 617, 231, 0, 0, 0, 0, 609, 215, 0, 0, 0, 0, 619.4714, 285.74185, 0, 0, 0, 0, 620, 310, 0, 0, 0, 0, 655, 182, 0, 0, 0, 0, 700, 100, 0, 0, 0, 0, 679, 221, 0, 0, 0, 0, 739, 206, 0, 0, 0, 0, 1241, 372, 0, 0, 0, 0, 1204, 657, 0, 0, 0, 0, 887, 575, 0, 0, 0, 0, 798, 510, 0, 0, 0, 0, 696, 322, 0, 0, 0, 0, 700, 450, 0, 0, 0, 0, 614, 509, 0, 0, 0, 0, 568, 407, 0, 0, 0, 0, 460, 445, 0, 0, 0, 0, 476, 364, 0, 0, 0, 0, 429, 360, 0, 0, 0, 0, 279, 206, 0, 0, 0, 0, 392, 469, 0, 0, 0, 0, 203, 313, 0, 0, 0, 0, 100, 450, 0, 0, 0, 0, 186, 278, 0, 0, 0, 0, -39, 294, 0, 0, 0, 0, 93, 5)
+}
+point_count = 40
+
+[node name="Course2" type="Node2D" unique_id=735602100 node_paths=PackedStringArray("boundary_path")]
+script = ExtResource("1_l5h32")
+theme = "Bihar Heritage"
+course_name = "CUSTOM LEVEL"
+boundary_path = NodePath("Boundary")
+outer_poly = PackedVector2Array(189, 108, 328, 96, 135, 19, 389, -178, 1032, -40, 688, 38, 417, 40, 362, 108, 352, 182, 517, 260, 439, 33, 541, 32, 551.14026, 219.2343, 520, 260, 617, 231, 609, 215, 619.4714, 285.74185, 620, 310, 655, 182, 700, 100, 679, 221, 739, 206, 1241, 372, 1204, 657, 887, 575, 798, 510, 696, 322, 700, 450, 614, 509, 568, 407, 460, 445, 476, 364, 429, 360, 279, 206, 392, 469, 203, 313, 100, 450, 186, 278, -39, 294, 93, 5)
+start_position = Vector2(51, 181)
+
+[node name="Boundary" type="Path2D" parent="." unique_id=955458842]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=949504683]
+position = Vector2(51, 181)
+rotation = -1.5937755
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." unique_id=1777726223 instance=ExtResource("2_547ft")]
+position = Vector2(785, 301)
+rotation = -0.15166539
+point_a = Vector2(0, -60)
+point_b = Vector2(0, 60)
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1690859444]
+
+[node name="Diamonds" type="Node2D" parent="." unique_id=276658950]
+
+[node name="Trees" type="Node2D" parent="." unique_id=1604077865]
+
+[node name="Diamond" parent="." unique_id=389137944 instance=ExtResource("3_0eqxv")]
+position = Vector2(511, 172)
+phase_offset = 0.5101787063509288
+
+[node name="HUD" parent="." unique_id=642116273 instance=ExtResource("4_8dm2a")]
+
+[node name="ToriiGate" parent="." unique_id=1434244671 instance=ExtResource("5_v2103")]
+position = Vector2(303.00003, 288)
+rotation = -0.14011872
+
+[node name="TreePine" parent="." unique_id=786658075 instance=ExtResource("6_0kwh6")]
+position = Vector2(677, 244)
+
+[node name="TerracottaMonument" parent="." unique_id=742033024 instance=ExtResource("7_547ft")]
+position = Vector2(548, 275)

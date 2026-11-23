@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cp6l4bvn4uge7"]
+
+[ext_resource type="PackedScene" uid="uid://c1k8v5m3kax2t" path="res://levels/level_template.tscn" id="1_jm5sq"]
+[ext_resource type="PackedScene" uid="uid://c5q7t1nak3j2x" path="res://scenes/prefabs/wall_obstacle.tscn" id="2_sun1q"]
+[ext_resource type="PackedScene" uid="uid://c6r8m2t4p5tak" path="res://scenes/prefabs/tree_sakura.tscn" id="3_hqsng"]
+[ext_resource type="PackedScene" uid="uid://b80am1k2t4p5s" path="res://scenes/prefabs/terracotta_monument.tscn" id="4_h7e0p"]
+[ext_resource type="PackedScene" uid="uid://das8m3t1p4k7b" path="res://scenes/prefabs/shrine_lantern.tscn" id="5_ay30a"]
+[ext_resource type="PackedScene" uid="uid://d3y8m1t4b6s2k" path="res://scenes/prefabs/torii_gate.tscn" id="6_vg37e"]
+
+[node name="Course2" unique_id=735602100 instance=ExtResource("1_jm5sq")]
+outer_poly = PackedVector2Array(182, 107, 321, 95, 128, 18, 382, -179, 1025, -41, 681, 37, 410, 39, 355, 107, 345, 181, 510, 259, 432, 32, 534, 31, 544.14026, 218.2343, 513, 259, 610, 230, 602, 214, 612.4714, 284.74185, 613, 309, 648, 181, 693, 99, 672, 220, 732, 205, 1234, 371, 1197, 656, 880, 574, 791, 509, 689, 321, 693, 449, 607, 508, 561, 406, 453, 444, 469, 363, 422, 359, 272, 205, 385, 468, 196, 312, 93, 449, 179, 277, -46, 293, 86, 4)
+start_position = Vector2(1198, 387)
+
+[node name="Boundary" parent="." index="0" unique_id=955458842]
+position = Vector2(-7, -1)
+
+[node name="StartPoint" parent="." index="1" unique_id=949504683]
+position = Vector2(1198, 387)
+
+[node name="FinishLine" parent="." index="2" unique_id=1777726223]
+position = Vector2(746, -40)
+
+[node name="WallObstacle" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="0" unique_id=1331911805 instance=ExtResource("2_sun1q")]
+position = Vector2(874, 380)
+polygon = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
+
+[node name="TreeSakura" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="1" unique_id=1049629225 instance=ExtResource("3_hqsng")]
+position = Vector2(971, 497)
+
+[node name="TerracottaMonument" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="2" unique_id=1540305324 instance=ExtResource("4_h7e0p")]
+position = Vector2(525, 338)
+
+[node name="ShrineLantern" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="3" unique_id=2085961355 instance=ExtResource("5_ay30a")]
+position = Vector2(377, 259)
+
+[node name="ShrineLantern2" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="4" unique_id=509332764 instance=ExtResource("5_ay30a")]
+position = Vector2(463, -107)
+
+[node name="ToriiGate" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="5" unique_id=218361804 instance=ExtResource("6_vg37e")]
+position = Vector2(339, -21)
+
+[node name="WallObstacle2" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="6" unique_id=140166092 instance=ExtResource("2_sun1q")]
+position = Vector2(208, 179)
+polygon = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
+
+[node name="ShrineLantern3" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="7" unique_id=953870881 instance=ExtResource("5_ay30a")]
+position = Vector2(758, 269)
+
+[node name="TerracottaMonument2" parent="Obstacles" parent_id_path=PackedInt32Array(1690859444) index="8" unique_id=1794058752 instance=ExtResource("4_h7e0p")]
+position = Vector2(621, 392)
