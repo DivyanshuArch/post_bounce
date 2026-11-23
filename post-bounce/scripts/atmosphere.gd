@@ -169,20 +169,6 @@ func draw_atmosphere(ctrl: Control) -> void:
 		var s: float = f["size"]
 		ctrl.draw_rect(Rect2(f["pos"].x, f["pos"].y, s, s), col)
 
-	# 5. Moonlit wash and soft vignette
-	# Upper-left subtle moon glow
-	var moon_col := Color(0.91, 0.89, 0.83, 0.08)
-	ctrl.draw_circle(Vector2(vp_size.x * 0.1, vp_size.y * 0.1), maxf(vp_size.x, vp_size.y) * 0.4, moon_col)
-
-	# Edge vignette
-	var vig_w: float = vp_size.x * 0.18
-	var vig_h: float = vp_size.y * 0.18
-	var vig_col := Color(0.047, 0.071, 0.059, 0.35)
-	ctrl.draw_rect(Rect2(0, 0, vp_size.x, vig_h), vig_col)
-	ctrl.draw_rect(Rect2(0, vp_size.y - vig_h, vp_size.x, vig_h), vig_col)
-	ctrl.draw_rect(Rect2(0, 0, vig_w, vp_size.y), vig_col)
-	ctrl.draw_rect(Rect2(vp_size.x - vig_w, 0, vig_w, vp_size.y), vig_col)
-
 func _on_visual_draw() -> void:
 	if visual:
 		draw_atmosphere(visual)
