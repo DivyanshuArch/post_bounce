@@ -38,14 +38,20 @@ point_b = Vector2(748, 122)
 
 [node name="Obstacles" type="Node2D" parent="." unique_id=1272356046]
 
-[node name="ToriiGate" parent="Obstacles" unique_id=1340328327 instance=ExtResource("5_tlht1")]
-position = Vector2(-525, 243)
-
 [node name="TreeBirch" parent="Obstacles" unique_id=596764972 instance=ExtResource("4_srgy7")]
 position = Vector2(-794, 233)
 
+[node name="ToriiGate" parent="Obstacles" unique_id=1340328327 instance=ExtResource("5_tlht1")]
+position = Vector2(-525, 243)
+
+[node name="ChortenMonument" parent="Obstacles" unique_id=791077903 instance=ExtResource("8_40ht7")]
+position = Vector2(-179, 234)
+
 [node name="ShrineLantern" parent="Obstacles" unique_id=1969550464 instance=ExtResource("6_6tpkr")]
 position = Vector2(-883, 334)
+
+[node name="ShrineLantern2" parent="Obstacles" unique_id=1275974182 instance=ExtResource("6_6tpkr")]
+position = Vector2(-652, 262)
 
 [node name="Diamonds" type="Node2D" parent="." unique_id=739143092]
 
@@ -60,9 +66,3 @@ phase_offset = 2.0046591612548648
 [node name="Trees" type="Node2D" parent="." unique_id=463264719]
 
 [node name="Atmosphere" parent="." unique_id=1663246668 instance=ExtResource("7_7n3s8")]
-
-[node name="ChortenMonument" parent="." unique_id=791077903 instance=ExtResource("8_40ht7")]
-position = Vector2(-179, 234)
-
-[node name="ShrineLantern" parent="." unique_id=1275974182 instance=ExtResource("6_6tpkr")]
-position = Vector2(-652, 262)
