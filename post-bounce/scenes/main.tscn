@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://c7m2y4lav1w3x"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://b2n4m8y6k1v3x" path="res://scenes/prefabs/course.tscn" id="2_course"]
+[ext_resource type="PackedScene" uid="uid://dm0k7q1x3p81a" path="res://scenes/prefabs/ball.tscn" id="3_ball"]
+[ext_resource type="Script" path="res://scripts/aim_guide.gd" id="4_aim"]
+[ext_resource type="Script" path="res://scripts/particle_manager.gd" id="5_particles"]
+[ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="6_atmo"]
+[ext_resource type="PackedScene" uid="uid://b1n5m7q2k8x3v" path="res://scenes/prefabs/hud.tscn" id="7_hud"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_left = -3000.0
+offset_top = -3000.0
+offset_right = 5000.0
+offset_bottom = 5000.0
+mouse_filter = 2
+color = Color(0.129, 0.173, 0.149, 1)
+
+[node name="Course" parent="World" instance=ExtResource("2_course")]
+
+[node name="Ball" parent="World" instance=ExtResource("3_ball")]
+
+[node name="AimGuide" type="Node2D" parent="World"]
+script = ExtResource("4_aim")
+
+[node name="ParticleManager" type="Node2D" parent="World"]
+script = ExtResource("5_particles")
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(400, 300)
+
+[node name="Atmosphere" parent="." instance=ExtResource("6_atmo")]
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]

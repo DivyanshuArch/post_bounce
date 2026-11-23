@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://b2n4m8y6k1v3x"]
+
+[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1v9" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+
+[node name="Course" type="Node2D"]
+script = ExtResource("1_course")
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="Trees" type="Node2D" parent="."]
+
+[node name="FinishLine" parent="." instance=ExtResource("2_finish")]

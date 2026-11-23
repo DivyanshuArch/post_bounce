@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dg4n8s2x6v1w0"]
+
+[ext_resource type="Script" uid="uid://cy1jl5l2albiu" path="res://scripts/tree_birch.gd" id="1_birch"]
+
+[node name="TreeBirch" type="Node2D" unique_id=596764972]
+script = ExtResource("1_birch")
+tree_scale = 2.0
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2059796759]

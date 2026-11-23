@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c5q7t1nak3j2x"]
+
+[ext_resource type="Script" uid="uid://cplmbwu1r3stf" path="res://scripts/wall_obstacle.gd" id="1_obstacle"]
+
+[node name="WallObstacle" type="Node2D" unique_id=1331911805]
+script = ExtResource("1_obstacle")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=224166990]
