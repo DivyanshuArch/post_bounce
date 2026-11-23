@@ -73,7 +73,7 @@ func spawn_floating_text(pos: Vector2, text: String, color: Color = Color("#fae3
 	tw.chain().tween_callback(lbl.queue_free)
 
 func spawn_diamond_burst(pos: Vector2) -> void:
-	spawn_floating_text(pos, "+1 ★", Palette.DIAMOND_CORE)
+	spawn_floating_text(pos, "+1 STAR", Palette.DIAMOND_CORE)
 	rings.append({
 		"pos": pos,
 		"radius": 7.0,

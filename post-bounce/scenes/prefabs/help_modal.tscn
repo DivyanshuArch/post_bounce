@@ -99,8 +99,8 @@ theme_override_constants/separation = 16
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
-theme_override_font_sizes/font_size = 22
-text = "🏹"
+theme_override_font_sizes/font_size = 18
+text = "01"
 horizontal_alignment = 1
 
 [node name="Desc1" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/Step1"]
@@ -119,8 +119,8 @@ theme_override_constants/separation = 16
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
-theme_override_font_sizes/font_size = 22
-text = "⚡"
+theme_override_font_sizes/font_size = 18
+text = "02"
 horizontal_alignment = 1
 
 [node name="Desc2" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/Step2"]
@@ -139,8 +139,8 @@ theme_override_constants/separation = 16
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
-theme_override_font_sizes/font_size = 22
-text = "⭐"
+theme_override_font_sizes/font_size = 18
+text = "03"
 horizontal_alignment = 1
 
 [node name="Desc3" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox/Step3"]

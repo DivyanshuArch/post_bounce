@@ -110,7 +110,7 @@ theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "← CLOSE"
+text = "CLOSE"
 
 [node name="Title" type="Label" parent="CenterContainer/PanelCard/Margin/ContentVBox"]
 layout_mode = 2
@@ -139,7 +139,8 @@ custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
 theme_override_font_sizes/font_size = 13
-text = "🔊 SOUND FX"
+text = "SOUND FX"
+
 
 [node name="SfxSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/SfxRow"]
 unique_name_in_owner = true
@@ -160,7 +161,7 @@ custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
 theme_override_font_sizes/font_size = 13
-text = "🎵 MUSIC"
+text = "MUSIC"
 
 [node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/AudioSection/MusicRow"]
 unique_name_in_owner = true
@@ -191,7 +192,7 @@ custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
 theme_override_font_sizes/font_size = 13
-text = "🎯 AIM SENSITIVITY"
+text = "AIM SENSITIVITY"
 
 [node name="SensitivitySlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/SensRow"]
 unique_name_in_owner = true
@@ -214,7 +215,7 @@ custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
 theme_override_font_sizes/font_size = 13
-text = "📐 TRAJECTORY LINE"
+text = "TRAJECTORY LINE"
 
 [node name="TrajButtonGroup" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/ContentVBox/ControlsSection/TrajRow"]
 layout_mode = 2
@@ -271,7 +272,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.78, 0.86, 0.8, 1)
 theme_override_font_sizes/font_size = 13
-text = "⛶ SCREEN SHAKE"
+text = "SCREEN SHAKE"
+
 
 [node name="ShakeToggle" type="CheckButton" parent="CenterContainer/PanelCard/Margin/ContentVBox/GameplaySection/ShakeRow"]
 unique_name_in_owner = true

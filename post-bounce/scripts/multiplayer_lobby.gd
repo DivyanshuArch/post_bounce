@@ -48,14 +48,15 @@ func _ready() -> void:
 		NetworkManager.active_rooms_updated.connect(_on_active_rooms_updated)
 
 		if NetworkManager.is_using_photon:
-			backend_badge.text = "⚡ PHOTON FUSION CLOUD"
+			backend_badge.text = "PHOTON FUSION CLOUD"
 			backend_badge.modulate = Color(0.4, 0.9, 0.55)
 		elif NetworkManager.is_web:
-			backend_badge.text = "🌐 WEB / ITCH.IO MULTIPLAYER"
+			backend_badge.text = "WEB / ITCH.IO MULTIPLAYER"
 			backend_badge.modulate = Color(0.35, 0.85, 0.95)
 		else:
-			backend_badge.text = "🌐 LOCAL / WI-FI ROOM MATCHMAKER"
+			backend_badge.text = "LOCAL / WI-FI ROOM MATCHMAKER"
 			backend_badge.modulate = Color(0.65, 0.85, 0.75)
+
 
 		NetworkManager.refresh_rooms()
 		discovered_rooms = NetworkManager.get_all_active_rooms()
@@ -99,7 +100,7 @@ func _rebuild_room_list() -> void:
 		row.add_theme_constant_override("separation", 10)
 
 		var info_lbl := Label.new()
-		info_lbl.text = "🚪 %s   (%s)" % [r_name, r_players]
+		info_lbl.text = "[ROOM] %s   (%s)" % [r_name, r_players]
 		info_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		info_lbl.modulate = Color(0.88, 0.94, 0.9, 1.0)
 		row.add_child(info_lbl)
@@ -166,7 +167,7 @@ func _show_room_view(r_name: String) -> void:
 	room_panel.visible = true
 	room_title_label.text = "ROOM: %s" % r_name
 	room_info_label.text = "Waiting for Player 2 to join... Game begins automatically!"
-	auto_start_banner.text = "⚡ As soon as another player joins this room, the game starts!"
+	auto_start_banner.text = "As soon as another player joins this room, the game starts!"
 	auto_start_banner.modulate = Color(0.85, 0.95, 0.88)
 	_update_room_slots()
 
@@ -181,15 +182,15 @@ func _update_room_slots() -> void:
 	for p_id in NetworkManager.players.keys():
 		var p_info: Dictionary = NetworkManager.players[p_id]
 		if p_info.get("is_host", false) or not p1_found:
-			slot1_label.text = "👑 %s" % p_info.get("name", "Player 1")
-			slot1_status.text = "IN ROOM 🟢"
+			slot1_label.text = "[HOST] %s" % p_info.get("name", "Player 1")
+			slot1_status.text = "IN ROOM"
 			slot1_status.modulate = Color(0.4, 0.9, 0.5)
 			p1_found = true
 			break
 
 	if not p1_found:
-		slot1_label.text = "👑 %s" % _get_player_name()
-		slot1_status.text = "IN ROOM 🟢"
+		slot1_label.text = "[HOST] %s" % _get_player_name()
+		slot1_status.text = "IN ROOM"
 		slot1_status.modulate = Color(0.4, 0.9, 0.5)
 
 	# Slot 2
@@ -200,15 +201,16 @@ func _update_room_slots() -> void:
 			if not p_info.get("is_host", false):
 				p2_name = p_info.get("name", "Player 2")
 				break
-		slot2_label.text = "🎮 %s" % p2_name
-		slot2_status.text = "JOINED 🟢"
+		slot2_label.text = "[P2] %s" % p2_name
+		slot2_status.text = "JOINED"
 		slot2_status.modulate = Color(0.4, 0.9, 0.5)
-		auto_start_banner.text = "🚀 PLAYER JOINED! STARTING GAME..."
+		auto_start_banner.text = "PLAYER JOINED! STARTING GAME..."
 		auto_start_banner.modulate = Color(0.98, 0.89, 0.4)
 	else:
-		slot2_label.text = "🎮 Waiting for opponent to join..."
-		slot2_status.text = "WAITING ⏳"
+		slot2_label.text = "Waiting for opponent to join..."
+		slot2_status.text = "WAITING"
 		slot2_status.modulate = Color(0.9, 0.8, 0.3)
+
 
 func _on_room_joined() -> void:
 	_update_room_slots()

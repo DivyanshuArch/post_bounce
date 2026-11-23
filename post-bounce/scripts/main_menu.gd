@@ -106,8 +106,14 @@ func _on_sound_toggle_pressed() -> void:
 		muted = SoundManager.toggle_mute()
 	_update_sound_icon(muted)
 
+const ICON_SOUND_ON = preload("res://assets/icons/icon_sound_on.svg")
+const ICON_SOUND_OFF = preload("res://assets/icons/icon_sound_off.svg")
+
 func _update_sound_icon(muted: bool) -> void:
-	sound_icon_btn.text = "🔇" if muted else "🔊"
+	if is_instance_valid(sound_icon_btn):
+		sound_icon_btn.icon = ICON_SOUND_OFF if muted else ICON_SOUND_ON
+		sound_icon_btn.text = ""
+
 
 func _on_draw_logo_emblem() -> void:
 	var center := logo_visual.size * 0.5

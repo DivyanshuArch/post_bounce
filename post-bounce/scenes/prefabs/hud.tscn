@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dp8tmlr1eaf8s" path="res://assets/icons/icon_reset.svg" id="2_reset"]
 [ext_resource type="Texture2D" uid="uid://do1hniydjdq34" path="res://assets/icons/icon_skip.svg" id="3_skip"]
 [ext_resource type="Texture2D" uid="uid://db3qq5m2dd2ip" path="res://assets/icons/icon_sound_on.svg" id="4_sound"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_warning.svg" id="5_warning"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 bg_color = Color(0.094, 0.133, 0.11, 0.52)
@@ -198,7 +199,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hint")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.94, 0.92, 0.76)
 theme_override_font_sizes/font_size = 13
-text = "Drag anywhere to aim & shoot  •  Bounce to the finish line  •  R to reset"
+text = "Drag anywhere to aim & shoot  |  Bounce to the finish line  |  R to reset"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -301,12 +302,13 @@ layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="WarningIcon" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1329456460]
+[node name="WarningIcon" type="TextureRect" parent="RootControl/RetryModal/Card/Margin/VBox"]
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.98, 0.45, 0.45, 1)
-theme_override_font_sizes/font_size = 28
-text = "✦"
-horizontal_alignment = 1
+size_flags_horizontal = 4
+texture = ExtResource("5_warning")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="RetryTitle" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1259401348]
 unique_name_in_owner = true
@@ -333,11 +335,14 @@ layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_retry_btn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_retry_btn_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_retry_btn_hover")
-text = "↺  TRY AGAIN"
+icon = ExtResource("2_reset")
+icon_alignment = 0
+expand_icon = true
+text = " TRY AGAIN"
 
 [node name="RetryHint" type="Label" parent="RootControl/RetryModal/Card/Margin/VBox" unique_id=1846127655]
 layout_mode = 2

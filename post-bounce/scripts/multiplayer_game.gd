@@ -411,7 +411,7 @@ func _show_waiting_screen() -> void:
 	var my_shots: int = my_info.get("shots", 0)
 	var my_diams: int = my_info.get("diamonds", 0)
 
-	waiting_title_lbl.text = "🏁 HOLE COMPLETED!"
+	waiting_title_lbl.text = "HOLE COMPLETED!"
 	waiting_subtitle_lbl.text = "You finished in %d shots with %d stars!" % [my_shots, my_diams]
 
 	# Find opponent info
@@ -428,7 +428,7 @@ func _show_waiting_screen() -> void:
 
 	waiting_p1_label_update(my_info.get("name", "You"), my_shots, my_diams)
 	waiting_p2_label_update(opp_name, opp_shots, opp_diams)
-	waiting_status_lbl.text = "⏳ Waiting for %s to complete the hole..." % opp_name
+	waiting_status_lbl.text = "Waiting for %s to complete the hole..." % opp_name
 
 	waiting_banner.visible = true
 	waiting_banner.modulate.a = 0.0
@@ -442,11 +442,11 @@ func _show_waiting_screen() -> void:
 
 func waiting_p1_label_update(p_name: String, shots: int, diams: int) -> void:
 	if is_instance_valid(waiting_p1_lbl):
-		waiting_p1_lbl.text = "👑 %s: %d Shots • %d ★ (FINISHED 🏁)" % [p_name, shots, diams]
+		waiting_p1_lbl.text = "[HOST] %s: %d Shots | %d Stars (FINISHED)" % [p_name, shots, diams]
 
 func waiting_p2_label_update(opp_name: String, shots: int, diams: int) -> void:
 	if is_instance_valid(waiting_p2_lbl):
-		waiting_p2_lbl.text = "🎮 %s: %d Shots • %d ★ (PLAYING...)" % [opp_name, shots, diams]
+		waiting_p2_lbl.text = "[P2] %s: %d Shots | %d Stars (PLAYING...)" % [opp_name, shots, diams]
 
 func _show_winner_screen() -> void:
 	waiting_banner.visible = false
@@ -472,25 +472,25 @@ func _show_winner_screen() -> void:
 
 	if p1_shots < p2_shots:
 		winner_id = p1_id
-		winner_title = "🏆 %s WINS HOLE %d!" % [p1_info["name"].to_upper(), current_course_index + 1]
+		winner_title = "%s WINS HOLE %d!" % [p1_info["name"].to_upper(), current_course_index + 1]
 		comp_msg = "%s won by %d fewer stroke%s!" % [p1_info["name"], p2_shots - p1_shots, "s" if (p2_shots - p1_shots) > 1 else ""]
 	elif p2_shots < p1_shots:
 		winner_id = p2_id
-		winner_title = "🏆 %s WINS HOLE %d!" % [p2_info["name"].to_upper(), current_course_index + 1]
+		winner_title = "%s WINS HOLE %d!" % [p2_info["name"].to_upper(), current_course_index + 1]
 		comp_msg = "%s won by %d fewer stroke%s!" % [p2_info["name"], p1_shots - p2_shots, "s" if (p1_shots - p2_shots) > 1 else ""]
 	else:
 		# Tie breaker: diamonds
 		if p1_diamonds > p2_diamonds:
 			winner_id = p1_id
-			winner_title = "🏆 %s WINS ON STARS!" % p1_info["name"].to_upper()
-			comp_msg = "Tied at %d shots — %s collected more stars!" % [p1_shots, p1_info["name"]]
+			winner_title = "%s WINS ON STARS!" % p1_info["name"].to_upper()
+			comp_msg = "Tied at %d shots - %s collected more stars!" % [p1_shots, p1_info["name"]]
 		elif p2_diamonds > p1_diamonds:
 			winner_id = p2_id
-			winner_title = "🏆 %s WINS ON STARS!" % p2_info["name"].to_upper()
-			comp_msg = "Tied at %d shots — %s collected more stars!" % [p2_shots, p2_info["name"]]
+			winner_title = "%s WINS ON STARS!" % p2_info["name"].to_upper()
+			comp_msg = "Tied at %d shots - %s collected more stars!" % [p2_shots, p2_info["name"]]
 		else:
 			winner_id = -1
-			winner_title = "🤝 IT'S A TIE!"
+			winner_title = "IT'S A TIE!"
 			comp_msg = "Both finished in %d shots with %d stars!" % [p1_shots, p1_diamonds]
 
 	# Track cumulative match score
@@ -501,22 +501,23 @@ func _show_winner_screen() -> void:
 	winner_sub_lbl.text = comp_msg
 
 	# Score Rows
-	var p1_tag := " [WINNER 🏆]" if winner_id == p1_id else ""
-	var p2_tag := " [WINNER 🏆]" if winner_id == p2_id else ""
-	winner_p1_lbl.text = "👑 %s: %d Shots • %d ★%s" % [p1_info["name"], p1_shots, p1_diamonds, p1_tag]
-	winner_p2_lbl.text = "🎮 %s: %d Shots • %d ★%s" % [p2_info["name"], p2_shots, p2_diamonds, p2_tag]
+	var p1_tag := " [WINNER]" if winner_id == p1_id else ""
+	var p2_tag := " [WINNER]" if winner_id == p2_id else ""
+	winner_p1_lbl.text = "[HOST] %s: %d Shots | %d Stars%s" % [p1_info["name"], p1_shots, p1_diamonds, p1_tag]
+	winner_p2_lbl.text = "[P2] %s: %d Shots | %d Stars%s" % [p2_info["name"], p2_shots, p2_diamonds, p2_tag]
 
 	var p1_wins: int = match_holes_won.get(p1_id, 0)
 	var p2_wins: int = match_holes_won.get(p2_id, 0)
-	match_score_lbl.text = "MATCH SCORE:  %s (%d)   —   %s (%d)" % [p1_info["name"], p1_wins, p2_info["name"], p2_wins]
+	match_score_lbl.text = "MATCH SCORE:  %s (%d)   -   %s (%d)" % [p1_info["name"], p1_wins, p2_info["name"], p2_wins]
 
-	next_course_btn.text = "NEXT HOLE ▶"
+	next_course_btn.text = "NEXT HOLE"
 	next_course_btn.visible = true
 
 	winner_banner.visible = true
 	winner_banner.modulate.a = 0.0
 	winner_banner.scale = Vector2(0.9, 0.9)
 	winner_banner.pivot_offset = winner_banner.size * 0.5
+
 
 	var tw := create_tween()
 	tw.set_parallel(true)
@@ -576,9 +577,9 @@ func _update_hud_scorecards() -> void:
 	# P1
 	if NetworkManager.players.has(1):
 		var p1 = NetworkManager.players[1]
-		p1_name_lbl.text = "👑 %s" % p1["name"]
-		p1_shots_lbl.text = "%d SHOTS  •  %d ★" % [p1["shots"], p1["diamonds"]]
-		p1_status_lbl.text = "FINISHED 🏁" if p1["finished"] else "PLAYING"
+		p1_name_lbl.text = "[HOST] %s" % p1["name"]
+		p1_shots_lbl.text = "%d SHOTS | %d STARS" % [p1["shots"], p1["diamonds"]]
+		p1_status_lbl.text = "FINISHED" if p1["finished"] else "PLAYING"
 		p1_status_lbl.modulate = Color(0.4, 0.9, 0.5) if p1["finished"] else Color(0.7, 0.82, 0.74)
 
 	# P2
@@ -590,10 +591,11 @@ func _update_hud_scorecards() -> void:
 
 	if client_id != -1:
 		var p2 = NetworkManager.players[client_id]
-		p2_name_lbl.text = "🎮 %s" % p2["name"]
-		p2_shots_lbl.text = "%d SHOTS  •  %d ★" % [p2["shots"], p2["diamonds"]]
-		p2_status_lbl.text = "FINISHED 🏁" if p2["finished"] else "PLAYING"
+		p2_name_lbl.text = "[P2] %s" % p2["name"]
+		p2_shots_lbl.text = "%d SHOTS | %d STARS" % [p2["shots"], p2["diamonds"]]
+		p2_status_lbl.text = "FINISHED" if p2["finished"] else "PLAYING"
 		p2_status_lbl.modulate = Color(0.4, 0.9, 0.5) if p2["finished"] else Color(0.7, 0.82, 0.74)
+
 
 # ----------------- Advancing to Next Level -----------------
 

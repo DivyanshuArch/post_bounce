@@ -16,7 +16,7 @@ var load_complete: bool = false
 var anim_t: float = 0.0
 
 var tips: Array[String] = [
-	"Tip: Drag back to aim — release to unleash your ricochet.",
+	"Tip: Drag back to aim - release to unleash your ricochet.",
 	"Tip: Use wall bounces to navigate around difficult obstacles.",
 	"Tip: Collect golden diamonds to maximize your level score.",
 	"Tip: Turn on Mobile Hotspot to play multiplayer anywhere without a router!",

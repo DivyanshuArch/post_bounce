@@ -104,7 +104,7 @@ theme_override_colors/font_color = Color(0.92, 0.96, 0.93, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "← BACK"
+text = "BACK"
 
 [node name="TitleBox" type="VBoxContainer" parent="TopBar"]
 layout_mode = 2
@@ -122,7 +122,7 @@ text = "MULTIPLAYER ROOMS"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.78, 0.72, 0.75)
 theme_override_font_sizes/font_size = 12
-text = "Enter the same room to play together — match starts automatically!"
+text = "Enter the same room to play together - match starts automatically!"
 
 [node name="PlayerNameBox" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
@@ -145,7 +145,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.9, 0.55, 1)
 theme_override_font_sizes/font_size = 12
-text = "⚡ PHOTON FUSION CONNECTED"
+text = "PHOTON FUSION CONNECTED"
 
 [node name="MainLayout" type="HBoxContainer" parent="."]
 unique_name_in_owner = true
@@ -207,7 +207,7 @@ theme_override_colors/font_color = Color(0.12, 0.17, 0.14, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
-text = "JOIN OR CREATE ROOM 🚪"
+text = "JOIN OR CREATE ROOM"
 
 [node name="QuickMatchButton" type="Button" parent="MainLayout/JoinCard/Margin/VBox"]
 unique_name_in_owner = true
@@ -217,7 +217,7 @@ theme_override_colors/font_color = Color(0.9, 0.96, 0.92, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "QUICK MATCH ⚡"
+text = "QUICK MATCH"
 
 [node name="Spacer" type="Control" parent="MainLayout/JoinCard/Margin/VBox"]
 layout_mode = 2
@@ -227,7 +227,7 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.82, 0.74, 0.85)
 theme_override_font_sizes/font_size = 12
-text = "⚡ Instant Auto-Start:\nGive this Room Name to a friend. The game begins automatically the second they enter!"
+text = "Instant Auto-Start:\nGive this Room Name to a friend. The game begins automatically the second they enter!"
 autowrap_mode = 2
 
 [node name="RoomsCard" type="PanelContainer" parent="MainLayout"]
@@ -265,7 +265,8 @@ theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_outline")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "REFRESH ⟳"
+text = "REFRESH"
+
 
 [node name="ScrollRooms" type="ScrollContainer" parent="MainLayout/RoomsCard/Margin/VBox"]
 layout_mode = 2
@@ -346,14 +347,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.9, 0.95, 0.92, 1)
 theme_override_font_sizes/font_size = 14
-text = "👑 Player 1"
+text = "Player 1 (Host)"
 
 [node name="Slot1Status" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot1Card/Slot1Margin/Slot1HBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
 theme_override_font_sizes/font_size = 13
-text = "IN ROOM 🟢"
+text = "IN ROOM"
 
 [node name="Slot2Card" type="PanelContainer" parent="RoomPanel/Margin/VBox/SlotsBox"]
 layout_mode = 2
@@ -375,14 +376,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.85, 0.9, 0.88, 1)
 theme_override_font_sizes/font_size = 14
-text = "🎮 Waiting for opponent to join..."
+text = "Waiting for opponent to join..."
 
 [node name="Slot2Status" type="Label" parent="RoomPanel/Margin/VBox/SlotsBox/Slot2Card/Slot2Margin/Slot2HBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
 theme_override_font_sizes/font_size = 13
-text = "WAITING ⏳"
+text = "WAITING"
 
 [node name="AutoStartBanner" type="Label" parent="RoomPanel/Margin/VBox"]
 unique_name_in_owner = true
@@ -390,7 +391,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.95, 0.88, 1)
 theme_override_constants/letter_spacing = 1
 theme_override_font_sizes/font_size = 13
-text = "⚡ As soon as another player joins this room, the game starts automatically!"
+text = "As soon as another player joins this room, the game starts automatically!"
+
 horizontal_alignment = 1
 
 [node name="LeaveRoomButton" type="Button" parent="RoomPanel/Margin/VBox"]

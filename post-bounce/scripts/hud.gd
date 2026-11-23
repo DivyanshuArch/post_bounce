@@ -96,9 +96,12 @@ func hide_out_of_bounds() -> void:
 	)
 
 
+const ICON_SOUND_ON = preload("res://assets/icons/icon_sound_on.svg")
+const ICON_SOUND_OFF = preload("res://assets/icons/icon_sound_off.svg")
+
 func update_course_info(course_num: int, shots: int, animate_pop: bool = false, custom_name: String = "") -> void:
 	if not custom_name.is_empty():
-		course_label_lbl.text = "COURSE %d • %s" % [course_num, custom_name.to_upper()]
+		course_label_lbl.text = "COURSE %d | %s" % [course_num, custom_name.to_upper()]
 	else:
 		course_label_lbl.text = "COURSE %d" % course_num
 	shot_counter_lbl.text = str(shots)
@@ -126,7 +129,7 @@ func on_first_shot() -> void:
 
 func show_course_clear(shots: int, diamonds_collected: int) -> void:
 	var shot_text: String = "HOLE IN ONE!" if shots == 1 else "%d SHOTS" % shots
-	var diamond_text: String = "  •  %d ★" % diamonds_collected if diamonds_collected > 0 else ""
+	var diamond_text: String = "  |  %d STARS" % diamonds_collected if diamonds_collected > 0 else ""
 	clear_sub.text = shot_text + diamond_text
 
 	clear_banner.visible = true
@@ -142,4 +145,7 @@ func hide_course_clear() -> void:
 	tw.tween_property(clear_banner, "scale", Vector2(0.92, 0.92), 0.2)
 
 func update_sound_icon(muted: bool) -> void:
-	sound_btn.text = "🔇" if muted else "🔊"
+	if is_instance_valid(sound_btn):
+		sound_btn.icon = ICON_SOUND_OFF if muted else ICON_SOUND_ON
+		sound_btn.text = ""
+

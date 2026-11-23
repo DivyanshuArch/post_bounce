@@ -2,8 +2,12 @@
 
 [ext_resource type="Script" uid="uid://n3sy1ijd7loe" path="res://scripts/main_menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="2_atmo"]
+[ext_resource type="Texture2D" uid="uid://g70iuvq2048b" path="res://assets/icons/icon_star.svg" id="3_8ln24"]
 [ext_resource type="PackedScene" uid="uid://cx4m8k10an3p2" path="res://scenes/prefabs/settings_modal.tscn" id="3_sett"]
 [ext_resource type="PackedScene" uid="uid://b8y1v2k4m7x3p" path="res://scenes/prefabs/help_modal.tscn" id="4_help"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_sound_on.svg" id="5_sound"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_settings.svg" id="6_gear"]
+
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icon_btn"]
 bg_color = Color(0.118, 0.165, 0.137, 0.5)
@@ -120,22 +124,23 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 0.85)
-theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_icon_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_icon_btn_hover")
-text = "🔊"
+icon = ExtResource("5_sound")
+icon_alignment = 1
+expand_icon = true
 
 [node name="GearIconButton" type="Button" parent="TopRightBar" unique_id=1519216459]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 0.85)
-theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_icon_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_icon_btn_hover")
-text = "⚙"
+icon = ExtResource("6_gear")
+icon_alignment = 1
+expand_icon = true
+
 
 [node name="CenterBox" type="VBoxContainer" parent="." unique_id=931153012]
 layout_mode = 1
@@ -199,7 +204,7 @@ theme_override_colors/font_color = Color(0.85, 0.93, 0.88, 1)
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sec")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_sec_hover")
-text = "MULTIPLAYER 👥"
+text = "MULTIPLAYER"
 
 [node name="SettingsButton" type="Button" parent="CenterBox/ButtonsVBox" unique_id=1249074923]
 unique_name_in_owner = true
@@ -243,11 +248,15 @@ grow_vertical = 0
 theme_override_constants/separation = 8
 alignment = 2
 
+[node name="TextureRect" type="TextureRect" parent="BestScoreContainer" unique_id=2084293577]
+layout_mode = 2
+texture = ExtResource("3_8ln24")
+
 [node name="StarIcon" type="Label" parent="BestScoreContainer" unique_id=709706801]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 0.75)
 theme_override_font_sizes/font_size = 15
-text = "★"
 
 [node name="BestScoreLabel" type="Label" parent="BestScoreContainer" unique_id=794637381]
 unique_name_in_owner = true
