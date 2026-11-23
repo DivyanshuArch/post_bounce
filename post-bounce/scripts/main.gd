@@ -2,7 +2,8 @@ class_name Main
 extends Node2D
 
 ## Main scene controller for Moonlit Ricochet.
-## Coordinates courses, slingshot aim-and-shoot, camera framing, particles, and HUD.
+## Coordinates level loading, slingshot aiming with squash & stretch,
+## trauma-based camera shake, hit-stops, celebratory slow-mo, and HUD.
 
 @export var current_course_index: int = 0
 
@@ -16,10 +17,15 @@ var aim_curr: Vector2 = Vector2.ZERO
 var aim_dir: Vector2 = Vector2.ZERO
 var aim_power: float = 0.0
 
-var shake_mag: float = 0.0
+# Camera trauma shake
+var trauma: float = 0.0
+const MAX_SHAKE_OFFSET: float = 12.0
+const MAX_SHAKE_ROLL: float = 0.06
+
 var target_cam_pos: Vector2 = Vector2(400.0, 300.0)
 var target_zoom: float = 1.0
 
+@onready var world: Node2D = $World
 @onready var course: Course = $World/Course
 @onready var ball: Ball = $World/Ball
 @onready var aim_guide: AimGuide = $World/AimGuide
@@ -47,16 +53,24 @@ func load_course(index: int, snap_cam: bool = false) -> void:
 	course_cleared = false
 	clear_timer = 0.0
 	aim_active = false
-	shake_mag = 0.0
+	trauma = 0.0
+	Engine.time_scale = 1.0
 
-	var def: Dictionary
-	if index < 6:
-		def = CourseManager.get_handcrafted_course(index)
+	var level_path := "res://levels/level_%d.tscn" % (index + 1)
+	if ResourceLoader.exists(level_path):
+		var scene = load(level_path)
+		if scene is PackedScene:
+			var new_course: Course = scene.instantiate()
+			var old_idx := course.get_index()
+			world.add_child(new_course)
+			world.move_child(new_course, old_idx)
+			course.queue_free()
+			course = new_course
 	else:
-		def = CourseManager.generate_procedural_course(index + 1)
-
-	var seed_val: int = (index + 1) * 53993 + 911
-	course.setup_from_def(def, seed_val)
+		# Fallback to procedural course if past handcrafted levels
+		var def := CourseManager.generate_procedural_course(index + 1)
+		var seed_val: int = (index + 1) * 53993 + 911
+		course.setup_from_def(def, seed_val)
 
 	ball.reset_to(course.start_position)
 	hud.update_course_info(index + 1, shots_taken)
@@ -90,6 +104,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var mb: InputEventMouseButton = event
 		if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			aim_active = false
+			ball.set_aim_stretch(Vector2.ZERO, 0.0)
 			_update_aim_guide()
 			return
 
@@ -116,6 +131,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			load_course(current_course_index, false)
 		elif k.keycode == KEY_ESCAPE:
 			aim_active = false
+			ball.set_aim_stretch(Vector2.ZERO, 0.0)
 			_update_aim_guide()
 
 func _update_aim_vector() -> void:
@@ -128,6 +144,9 @@ func _update_aim_vector() -> void:
 	else:
 		aim_power = 0.0
 
+	# Juice: stretch ball along aim pull
+	ball.set_aim_stretch(aim_dir, aim_power)
+
 func _update_aim_guide() -> void:
 	var finish_data: Dictionary = course.finish_line.get_global_segment() if is_instance_valid(course.finish_line) else {}
 	aim_guide.set_aim_state(aim_active, ball.global_position, aim_dir, aim_power, course.get_all_segments(), finish_data)
@@ -136,6 +155,7 @@ func _release_shot() -> void:
 	if not aim_active:
 		return
 	aim_active = false
+	ball.set_aim_stretch(Vector2.ZERO, 0.0)
 	_update_aim_guide()
 
 	if ball.is_moving or course_cleared:
@@ -154,6 +174,7 @@ func _release_shot() -> void:
 
 	var dust_pos: Vector2 = ball.global_position - aim_dir * ball.radius
 	particle_manager.spawn_bounce_dust(dust_pos, -aim_dir, launch_speed * 0.5)
+	add_trauma(0.12 + aim_power * 0.15)
 	hud.on_first_shot()
 
 func _physics_process(delta: float) -> void:
@@ -177,38 +198,66 @@ func _process(delta: float) -> void:
 	var next_zoom: float = lerpf(cur_zoom, target_zoom, 1.0 - exp(-6.0 * delta))
 	camera.zoom = Vector2(next_zoom, next_zoom)
 
-	# Micro screenshake
-	if shake_mag > 0.05:
-		camera.offset = Vector2((randf() - 0.5) * 2.0 * shake_mag, (randf() - 0.5) * 2.0 * shake_mag)
-		shake_mag *= exp(-18.0 * delta)
+	# Camera trauma shake with quadratic decay and rotational kick
+	if trauma > 0.0:
+		trauma = maxf(0.0, trauma - delta * 1.5)
+		var shake: float = trauma * trauma
+		camera.offset = Vector2(
+			(randf() - 0.5) * 2.0 * MAX_SHAKE_OFFSET * shake,
+			(randf() - 0.5) * 2.0 * MAX_SHAKE_OFFSET * shake
+		)
+		camera.rotation = (randf() - 0.5) * 2.0 * MAX_SHAKE_ROLL * shake
 	else:
 		camera.offset = Vector2.ZERO
-		shake_mag = 0.0
+		camera.rotation = 0.0
 
 	# Update atmosphere
 	var cam_offset: Vector2 = camera.position - course.bounds_center
 	atmosphere.update_atmosphere(delta, cam_offset)
 
+func add_trauma(amount: float) -> void:
+	trauma = clampf(trauma + amount, 0.0, 1.0)
+
+func trigger_hit_stop(duration_sec: float, time_scale_val: float = 0.05) -> void:
+	Engine.time_scale = time_scale_val
+	await get_tree().create_timer(duration_sec, true, false, true).timeout
+	Engine.time_scale = 1.0
+
 func _on_ball_bounced(c: Vector2, normal: Vector2, impact_speed: float, count: int) -> void:
+	# Juice 1: Squash ball against wall normal
+	ball.apply_impact_squash(normal, impact_speed)
+
+	# Juice 2: Sound, particles, and camera trauma
 	if impact_speed > 45.0:
 		SoundManager.play_bounce(impact_speed, count)
 		particle_manager.spawn_bounce_dust(c, normal, impact_speed)
-		if impact_speed > 260.0:
-			shake_mag = minf(6.5, shake_mag + (impact_speed - 220.0) * 0.0085)
+		var norm_speed: float = clampf(impact_speed / 800.0, 0.0, 1.0)
+		add_trauma(norm_speed * 0.45)
+
+		# Juice 3: Hit-stop on heavy crunch
+		if impact_speed > 400.0:
+			trigger_hit_stop(0.032, 0.06)
 
 func _on_diamond_hit(dm: Node2D) -> void:
 	SoundManager.play_diamond_chime()
 	particle_manager.spawn_diamond_burst(dm.global_position)
+	add_trauma(0.18)
+	trigger_hit_stop(0.025, 0.1)
 
 func _on_finish_reached() -> void:
 	if course_cleared:
 		return
 	course_cleared = true
-	clear_timer = 1.45
+	clear_timer = 1.6
 
 	SoundManager.play_finish_fanfare()
-
 	particle_manager.spawn_finish_celebration(ball.global_position)
+	add_trauma(0.4)
+
+	# Course clear celebratory slow-mo
+	Engine.time_scale = 0.35
+	var tw := create_tween()
+	tw.tween_property(Engine, "time_scale", 1.0, 0.45).set_trans(Tween.TRANS_SINE)
 
 	var collected_count: int = 0
 	for d in course.diamonds:

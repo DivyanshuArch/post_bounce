@@ -1,7 +1,9 @@
+@tool
 class_name Diamond
 extends Node2D
 
 ## Glowing yellow diamond along bank-shot lanes.
+## Marked @tool so it renders live in the Godot 2D editor.
 
 signal collected_signal(diamond: Diamond)
 
@@ -15,11 +17,13 @@ var time_elapsed: float = 0.0
 func _ready() -> void:
 	if phase_offset == 0.0:
 		phase_offset = randf() * TAU
+	queue_redraw()
 
 func _process(delta: float) -> void:
 	if is_collected:
 		return
-	time_elapsed += delta
+	if not Engine.is_editor_hint():
+		time_elapsed += delta
 	queue_redraw()
 
 func collect() -> void:
@@ -33,8 +37,8 @@ func _draw() -> void:
 	if is_collected:
 		return
 
-	var pulse: float = 0.5 + 0.5 * sin(time_elapsed * 2.7 + phase_offset)
-	var bob: float = sin(time_elapsed * bob_speed + phase_offset) * bob_height
+	var pulse: float = 0.5 + 0.5 * sin(time_elapsed * 2.7 + phase_offset) if not Engine.is_editor_hint() else 0.8
+	var bob: float = sin(time_elapsed * bob_speed + phase_offset) * bob_height if not Engine.is_editor_hint() else 0.0
 	var center := Vector2(0.0, bob)
 
 	# 1. Outer translucent golden aura
@@ -46,7 +50,7 @@ func _draw() -> void:
 	draw_circle(center, aura_r * 0.54, col_inner)
 
 	# 2. Tilted geometric diamond
-	var rot: float = sin(time_elapsed * 1.4 + phase_offset) * 0.15
+	var rot: float = sin(time_elapsed * 1.4 + phase_offset) * 0.15 if not Engine.is_editor_hint() else 0.0
 	var xform := Transform2D(rot, center)
 
 	var core_pts: PackedVector2Array = [

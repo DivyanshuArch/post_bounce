@@ -1,6 +1,7 @@
 extends Node
 
-## Synthesized audio engine matching the original Web Audio API chimes, clacks, and fanfare.
+## Sound & Music Manager
+## Synthesizes classic moonlit tones and layers imported SFX & ambient music.
 
 var is_muted: bool = false
 const SAMPLE_RATE: int = 44100
@@ -9,7 +10,13 @@ var chime_notes: Array[float] = [587.33, 659.25, 739.99, 880.0, 987.77, 1174.66]
 var chime_idx: int = 0
 
 var audio_players: Array[AudioStreamPlayer] = []
-const POOL_SIZE: int = 12
+const POOL_SIZE: int = 16
+
+var music_player: AudioStreamPlayer
+var impact_samples: Array[AudioStream] = []
+var ui_click_sound: AudioStream
+var ui_hover_sound: AudioStream
+var release_sound: AudioStream
 
 func _ready() -> void:
 	for i in range(POOL_SIZE):
@@ -17,6 +24,46 @@ func _ready() -> void:
 		p.bus = &"Master"
 		add_child(p)
 		audio_players.append(p)
+
+	# Music player
+	music_player = AudioStreamPlayer.new()
+	music_player.bus = &"Master"
+	music_player.volume_db = -16.0
+	add_child(music_player)
+
+	# Load music if present
+	var music_path := "res://assets/sfx/music/forest-stroll-mix.ogg"
+	if ResourceLoader.exists(music_path):
+		var m_stream = load(music_path)
+		if m_stream is AudioStream:
+			music_player.stream = m_stream
+			music_player.play()
+
+	# Load imported Kenney SFX
+	var impact_paths: Array[String] = [
+		"res://assets/sfx/Impact-Sound/Audio/switch1.ogg",
+		"res://assets/sfx/Impact-Sound/Audio/switch2.ogg",
+		"res://assets/sfx/Impact-Sound/Audio/switch3.ogg",
+		"res://assets/sfx/Impact-Sound/Audio/switch6.ogg",
+		"res://assets/sfx/Impact-Sound/Audio/click3.ogg"
+	]
+	for path in impact_paths:
+		if ResourceLoader.exists(path):
+			var s = load(path)
+			if s is AudioStream:
+				impact_samples.append(s)
+
+	var click_path := "res://assets/sfx/UI-Sound/Audio/click1.ogg"
+	if ResourceLoader.exists(click_path):
+		ui_click_sound = load(click_path)
+
+	var hover_path := "res://assets/sfx/UI-Sound/Audio/rollover1.ogg"
+	if ResourceLoader.exists(hover_path):
+		ui_hover_sound = load(hover_path)
+
+	var rel_path := "res://assets/sfx/Impact-Sound/Audio/mouserelease1.ogg"
+	if ResourceLoader.exists(rel_path):
+		release_sound = load(rel_path)
 
 func _get_free_player() -> AudioStreamPlayer:
 	for p in audio_players:
@@ -26,11 +73,23 @@ func _get_free_player() -> AudioStreamPlayer:
 
 func toggle_mute() -> bool:
 	is_muted = not is_muted
+	if is_instance_valid(music_player):
+		music_player.stream_paused = is_muted
 	return is_muted
 
 func play_shoot(power_ratio: float) -> void:
 	if is_muted:
 		return
+
+	# Layered release sound
+	if release_sound:
+		var p_sfx := _get_free_player()
+		p_sfx.stream = release_sound
+		p_sfx.volume_db = -6.0 + power_ratio * 4.0
+		p_sfx.pitch_scale = 0.95 + power_ratio * 0.3
+		p_sfx.play()
+
+	# Synthesized launch tone
 	var duration: float = 0.14
 	var total_samples: int = int(SAMPLE_RATE * duration)
 	var data: PackedByteArray = PackedByteArray()
@@ -46,9 +105,7 @@ func play_shoot(power_ratio: float) -> void:
 		phase += freq / float(SAMPLE_RATE)
 		if phase >= 1.0:
 			phase -= 1.0
-		# Triangle wave:
 		var raw: float = 4.0 * absf(phase - 0.5) - 1.0
-		# Envelope
 		var env: float = 1.0 - (t / duration)
 		var vol: float = (0.2 + power_ratio * 0.25) * env
 		var sample_val: int = int(clampf(raw * vol, -1.0, 1.0) * 32767.0)
@@ -62,12 +119,26 @@ func play_shoot(power_ratio: float) -> void:
 
 	var player := _get_free_player()
 	player.stream = stream
+	player.volume_db = 0.0
+	player.pitch_scale = 1.0
 	player.play()
 
 func play_bounce(impact_speed: float, bounce_count: int) -> void:
 	if is_muted:
 		return
+
 	var norm: float = clampf(impact_speed / 700.0, 0.12, 1.0)
+
+	# 1. Layer imported impact SFX
+	if not impact_samples.is_empty():
+		var sfx_player := _get_free_player()
+		var sfx = impact_samples[randi() % impact_samples.size()]
+		sfx_player.stream = sfx
+		sfx_player.volume_db = -18.0 + norm * 14.0
+		sfx_player.pitch_scale = randf_range(0.88, 1.15)
+		sfx_player.play()
+
+	# 2. Synthesized frequency clack
 	var pitch_boost: float = minf(bounce_count, 6) * 28.0
 	var base_freq: float = 260.0 + norm * 220.0 + pitch_boost
 
@@ -97,6 +168,8 @@ func play_bounce(impact_speed: float, bounce_count: int) -> void:
 
 	var player := _get_free_player()
 	player.stream = stream
+	player.volume_db = -2.0
+	player.pitch_scale = 1.0
 	player.play()
 
 func play_diamond_chime() -> void:
@@ -134,6 +207,8 @@ func play_diamond_chime() -> void:
 
 	var player := _get_free_player()
 	player.stream = stream
+	player.volume_db = 2.0
+	player.pitch_scale = 1.0
 	player.play()
 
 func play_finish_fanfare() -> void:
@@ -174,4 +249,24 @@ func _play_fanfare_note(freq: float, delay_sec: float, is_sine: bool) -> void:
 
 	var player := _get_free_player()
 	player.stream = stream
+	player.volume_db = 1.0
+	player.pitch_scale = 1.0
 	player.play()
+
+func play_ui_click() -> void:
+	if is_muted or not ui_click_sound:
+		return
+	var p := _get_free_player()
+	p.stream = ui_click_sound
+	p.volume_db = -4.0
+	p.pitch_scale = randf_range(0.95, 1.05)
+	p.play()
+
+func play_ui_hover() -> void:
+	if is_muted or not ui_hover_sound:
+		return
+	var p := _get_free_player()
+	p.stream = ui_hover_sound
+	p.volume_db = -10.0
+	p.pitch_scale = randf_range(0.95, 1.05)
+	p.play()

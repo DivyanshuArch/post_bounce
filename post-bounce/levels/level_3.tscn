@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://d3m9x1k5j7v2l"]
+
+[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1v9" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="3_diamond"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 70, 410, 0, 0, 0, 0, 460, 410, 0, 0, 0, 0, 550, 320, 0, 0, 0, 0, 550, 240, 0, 0, 0, 0, 860, 240, 0, 0, 0, 0, 860, 90, 0, 0, 0, 0, 450, 90, 0, 0, 0, 0, 360, 180, 0, 0, 0, 0, 360, 265, 0, 0, 0, 0, 70, 265, 0, 0, 0, 0, 70, 410)
+}
+point_count = 11
+
+[node name="Course" type="Node2D"]
+script = ExtResource("1_course")
+course_name = "ZIG-ZAG GORGE"
+outer_poly = PackedVector2Array(70, 410, 460, 410, 550, 320, 550, 240, 860, 240, 860, 90, 450, 90, 360, 180, 360, 265, 70, 265)
+start_position = Vector2(145, 338)
+
+[node name="Boundary" type="Path2D" parent="."]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="."]
+position = Vector2(145, 338)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." instance=ExtResource("2_finish")]
+point_a = Vector2(825, 98)
+point_b = Vector2(825, 232)
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="Diamond1" parent="Diamonds" instance=ExtResource("3_diamond")]
+position = Vector2(465, 335)
+
+[node name="Diamond2" parent="Diamonds" instance=ExtResource("3_diamond")]
+position = Vector2(455, 165)
+
+[node name="Trees" type="Node2D" parent="."]

@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://g6n3x0k4j8v5l"]
+
+[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1v9" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="PackedScene" uid="uid://c5q7t1m9k3j2x" path="res://scenes/prefabs/wall_obstacle.tscn" id="3_obstacle"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="4_diamond"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 80, 130, 0, 0, 0, 0, 820, 130, 0, 0, 0, 0, 820, 520, 0, 0, 0, 0, 540, 520, 0, 0, 0, 0, 540, 365, 0, 0, 0, 0, 80, 365, 0, 0, 0, 0, 80, 130)
+}
+point_count = 7
+
+[node name="Course" type="Node2D"]
+script = ExtResource("1_course")
+course_name = "MOONLIT FUNNEL"
+outer_poly = PackedVector2Array(80, 130, 820, 130, 820, 520, 540, 520, 540, 365, 80, 365)
+start_position = Vector2(170, 248)
+
+[node name="Boundary" type="Path2D" parent="."]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="."]
+position = Vector2(170, 248)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." instance=ExtResource("2_finish")]
+point_a = Vector2(552, 482)
+point_b = Vector2(808, 482)
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Deflector" parent="Obstacles" instance=ExtResource("3_obstacle")]
+polygon = PackedVector2Array(410, 130, 470, 130, 470, 265, 410, 235)
+
+[node name="LowerIsland" parent="Obstacles" instance=ExtResource("3_obstacle")]
+polygon = PackedVector2Array(570, 260, 685, 280, 650, 365, 560, 335)
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="Diamond1" parent="Diamonds" instance=ExtResource("4_diamond")]
+position = Vector2(325, 310)
+
+[node name="Diamond2" parent="Diamonds" instance=ExtResource("4_diamond")]
+position = Vector2(750, 215)
+
+[node name="Trees" type="Node2D" parent="."]

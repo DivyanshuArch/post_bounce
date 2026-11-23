@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://e4n1x8k2j6v3l"]
+
+[ext_resource type="Script" path="res://scripts/course.gd" id="1_course"]
+[ext_resource type="PackedScene" uid="uid://df7w8y3e5m1v9" path="res://scenes/prefabs/finish_line.tscn" id="2_finish"]
+[ext_resource type="PackedScene" uid="uid://c5q7t1m9k3j2x" path="res://scenes/prefabs/wall_obstacle.tscn" id="3_obstacle"]
+[ext_resource type="PackedScene" uid="uid://c6xk1d8v7m2y4" path="res://scenes/prefabs/diamond.tscn" id="4_diamond"]
+
+[sub_resource type="Curve2D" id="Curve2D_boundary"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 90, 200, 0, 0, 0, 0, 220, 80, 0, 0, 0, 0, 700, 80, 0, 0, 0, 0, 830, 200, 0, 0, 0, 0, 830, 440, 0, 0, 0, 0, 700, 560, 0, 0, 0, 0, 220, 560, 0, 0, 0, 0, 90, 440, 0, 0, 0, 0, 90, 200)
+}
+point_count = 9
+
+[node name="Course" type="Node2D"]
+script = ExtResource("1_course")
+course_name = "SHATTERED GLADE"
+outer_poly = PackedVector2Array(90, 200, 220, 80, 700, 80, 830, 200, 830, 440, 700, 560, 220, 560, 90, 440)
+start_position = Vector2(170, 380)
+
+[node name="Boundary" type="Path2D" parent="."]
+curve = SubResource("Curve2D_boundary")
+
+[node name="StartPoint" type="Marker2D" parent="."]
+position = Vector2(170, 380)
+gizmo_extents = 24.0
+
+[node name="FinishLine" parent="." instance=ExtResource("2_finish")]
+point_a = Vector2(775, 180)
+point_b = Vector2(775, 300)
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Rock1" parent="Obstacles" instance=ExtResource("3_obstacle")]
+polygon = PackedVector2Array(310, 195, 405, 245, 325, 320, 255, 255)
+
+[node name="Rock2" parent="Obstacles" instance=ExtResource("3_obstacle")]
+polygon = PackedVector2Array(545, 175, 645, 220, 590, 315, 505, 265)
+
+[node name="Rock3" parent="Obstacles" instance=ExtResource("3_obstacle")]
+polygon = PackedVector2Array(430, 365, 535, 410, 470, 485, 375, 435)
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="DiamondTop" parent="Diamonds" instance=ExtResource("4_diamond")]
+position = Vector2(450, 132)
+
+[node name="DiamondBottom" parent="Diamonds" instance=ExtResource("4_diamond")]
+position = Vector2(655, 435)
+
+[node name="Trees" type="Node2D" parent="."]

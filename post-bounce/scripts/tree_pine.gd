@@ -1,7 +1,9 @@
+@tool
 class_name TreePine
 extends Node2D
 
 ## Top-down tiered pine tree perched on wall ledges.
+## Marked @tool so it renders live in the Godot 2D editor.
 
 @export var tree_scale: float = 1.0:
 	set(val):
@@ -21,9 +23,10 @@ var tiers: Array[Dictionary] = []
 
 func _ready() -> void:
 	if seed_val == 0:
-		seed_val = int(global_position.x * 73.0 + global_position.y * 31.0) & 0x7FFFFFFF
+		seed_val = int(abs(global_position.x * 73.0 + global_position.y * 31.0)) & 0x7FFFFFFF
 	sway_phase = randf() * TAU
 	_regenerate_tiers()
+	queue_redraw()
 
 func _regenerate_tiers() -> void:
 	var rng := RandomNumberGenerator.new()
@@ -47,6 +50,8 @@ func _regenerate_tiers() -> void:
 	]
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	time_elapsed += delta
 	queue_redraw()
 
@@ -61,8 +66,8 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	# 2. Canopies with wind sway
-	var wind_x: float = sin(time_elapsed * 1.35 + sway_phase) * 1.2
-	var wind_y: float = cos(time_elapsed * 1.1 + sway_phase) * 0.8
+	var wind_x: float = sin(time_elapsed * 1.35 + sway_phase) * 1.2 if not Engine.is_editor_hint() else 0.0
+	var wind_y: float = cos(time_elapsed * 1.1 + sway_phase) * 0.8 if not Engine.is_editor_hint() else 0.0
 
 	for k in range(tiers.size()):
 		var tier: Dictionary = tiers[k]

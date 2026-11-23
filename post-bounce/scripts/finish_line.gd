@@ -1,11 +1,24 @@
+@tool
 class_name FinishLine
 extends Node2D
 
 ## Glowing top-down checkered finish line with pulsing lantern posts.
+## Marked @tool so it renders live in the Godot 2D editor.
 
-@export var point_a: Vector2 = Vector2(-75.0, 0.0)
-@export var point_b: Vector2 = Vector2(75.0, 0.0)
-@export var strip_thickness: float = 16.0
+@export var point_a: Vector2 = Vector2(-75.0, 0.0):
+	set(val):
+		point_a = val
+		queue_redraw()
+
+@export var point_b: Vector2 = Vector2(75.0, 0.0):
+	set(val):
+		point_b = val
+		queue_redraw()
+
+@export var strip_thickness: float = 16.0:
+	set(val):
+		strip_thickness = val
+		queue_redraw()
 
 var time_elapsed: float = 0.0
 
@@ -27,7 +40,7 @@ func _draw() -> void:
 		return
 
 	var angle: float = delta_vec.angle()
-	var pulse: float = 0.5 + 0.5 * sin(time_elapsed * 3.2)
+	var pulse: float = 0.5 + 0.5 * sin(time_elapsed * 3.2) if not Engine.is_editor_hint() else 0.8
 
 	draw_set_transform(point_a, angle, Vector2.ONE)
 

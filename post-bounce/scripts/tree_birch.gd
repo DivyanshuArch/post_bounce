@@ -1,7 +1,9 @@
+@tool
 class_name TreeBirch
 extends Node2D
 
 ## Top-down leaning birch tree with striped white trunk and twin canopies.
+## Marked @tool so it renders live in the Godot 2D editor.
 
 @export var tree_scale: float = 1.0:
 	set(val):
@@ -24,9 +26,10 @@ var canopy2_off: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	if seed_val == 0:
-		seed_val = int(global_position.x * 67.0 + global_position.y * 43.0) & 0x7FFFFFFF
+		seed_val = int(abs(global_position.x * 67.0 + global_position.y * 43.0)) & 0x7FFFFFFF
 	sway_phase = randf() * TAU
 	_regenerate()
+	queue_redraw()
 
 func _regenerate() -> void:
 	var rng := RandomNumberGenerator.new()
@@ -41,6 +44,8 @@ func _regenerate() -> void:
 	canopy2_off = Vector2(cos(ang + 0.9) * (9.0 * tree_scale), sin(ang + 0.9) * (9.0 * tree_scale))
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	time_elapsed += delta
 	queue_redraw()
 
@@ -55,8 +60,8 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	# 2. Wind sway & trunk
-	var wind_x: float = sin(time_elapsed * 1.35 + sway_phase) * 1.2
-	var wind_y: float = cos(time_elapsed * 1.1 + sway_phase) * 0.8
+	var wind_x: float = sin(time_elapsed * 1.35 + sway_phase) * 1.2 if not Engine.is_editor_hint() else 0.0
+	var wind_y: float = cos(time_elapsed * 1.1 + sway_phase) * 0.8 if not Engine.is_editor_hint() else 0.0
 	var top_pt: Vector2 = lean_vec + Vector2(wind_x * 0.55, wind_y * 0.55)
 
 	# Draw birch trunk

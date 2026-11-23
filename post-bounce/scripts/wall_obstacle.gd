@@ -1,7 +1,9 @@
+@tool
 class_name WallObstacle
 extends Node2D
 
 ## Raised cliff island obstacle with drop shadow, inner ridge facet, and contour outline.
+## Marked @tool so it renders live in the Godot 2D editor.
 
 @export var polygon: PackedVector2Array = [
 	Vector2(-50.0, -50.0),
@@ -18,8 +20,11 @@ var segment_flashes: Array[float] = []
 func _ready() -> void:
 	segment_flashes.resize(polygon.size())
 	segment_flashes.fill(0.0)
+	queue_redraw()
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	var needs_redraw: bool = false
 	for i in range(segment_flashes.size()):
 		if segment_flashes[i] > 0.0:
@@ -85,7 +90,7 @@ func _draw() -> void:
 	for i in range(count):
 		var a: Vector2 = polygon[i]
 		var b: Vector2 = polygon[(i + 1) % count]
-		var flash_val: float = segment_flashes[i]
+		var flash_val: float = segment_flashes[i] if i < segment_flashes.size() else 0.0
 		var col: Color = Palette.CONTOUR_FLASH if flash_val > 0.02 else Palette.CONTOUR_LINE
 		var width: float = 2.4 + flash_val * 1.8 if flash_val > 0.02 else 2.2
 		draw_line(a, b, col, width, true)

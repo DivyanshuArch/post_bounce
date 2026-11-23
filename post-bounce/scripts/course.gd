@@ -1,10 +1,29 @@
+@tool
 class_name Course
 extends Node2D
 
 ## Course node containing floor facets, flora, boundary walls, obstacles,
 ## start marker, finish line, diamonds, and ledge trees.
+## Marked @tool so that levels and level_template render with FULL visual preview
+## in the Godot 2D editor!
 
-@export var course_name: String = "MOONLIT BEND"
+@export var course_name: String = "MOONLIT BEND":
+	set(val):
+		course_name = val
+		if Engine.is_editor_hint():
+			var seed_int: int = int(abs(hash(course_name))) & 0x7FFFFFFF
+			generate_decorations(seed_int if seed_int != 0 else 12345)
+			queue_redraw()
+
+@export var boundary_path: Path2D:
+	set(val):
+		if boundary_path and is_instance_valid(boundary_path) and boundary_path.curve:
+			if boundary_path.curve.changed.is_connected(_on_boundary_curve_changed):
+				boundary_path.curve.changed.disconnect(_on_boundary_curve_changed)
+		boundary_path = val
+		_connect_boundary_path()
+		_update_from_boundary_path()
+
 @export var outer_poly: PackedVector2Array = [
 	Vector2(100.0, 400.0),
 	Vector2(640.0, 400.0),
@@ -17,9 +36,16 @@ extends Node2D
 	set(val):
 		outer_poly = val
 		_compute_bounds()
+		_build_outer_segments()
+		if Engine.is_editor_hint():
+			var seed_int: int = int(abs(hash(course_name))) & 0x7FFFFFFF
+			generate_decorations(seed_int if seed_int != 0 else 12345)
 		queue_redraw()
 
-@export var start_position: Vector2 = Vector2(190.0, 320.0)
+@export var start_position: Vector2 = Vector2(190.0, 320.0):
+	set(val):
+		start_position = val
+		queue_redraw()
 
 var bounds: Rect2 = Rect2(100.0, 90.0, 660.0, 310.0)
 var bounds_center: Vector2 = Vector2(430.0, 245.0)
@@ -39,10 +65,10 @@ var trees: Array[Node2D] = []
 
 var time_elapsed: float = 0.0
 
-@onready var obstacles_container: Node2D = $Obstacles
-@onready var diamonds_container: Node2D = $Diamonds
-@onready var trees_container: Node2D = $Trees
-@onready var finish_line_node: FinishLine = $FinishLine
+@onready var obstacles_container: Node2D = $Obstacles if has_node("Obstacles") else null
+@onready var diamonds_container: Node2D = $Diamonds if has_node("Diamonds") else null
+@onready var trees_container: Node2D = $Trees if has_node("Trees") else null
+@onready var finish_line_node: FinishLine = $FinishLine if has_node("FinishLine") else null
 
 const PREFAB_PINE = preload("res://scenes/prefabs/tree_pine.tscn")
 const PREFAB_BIRCH = preload("res://scenes/prefabs/tree_birch.tscn")
@@ -51,9 +77,100 @@ const PREFAB_DIAMOND = preload("res://scenes/prefabs/diamond.tscn")
 const PREFAB_FINISH = preload("res://scenes/prefabs/finish_line.tscn")
 
 func _ready() -> void:
+	# 1. Read in-editor placed children if present
+	if has_node("StartPoint"):
+		var sp = get_node("StartPoint")
+		if sp is Node2D:
+			start_position = sp.position
+
+	if has_node("FinishLine"):
+		var fl = get_node("FinishLine")
+		if fl is FinishLine:
+			finish_line = fl
+
+	if has_node("Obstacles"):
+		obstacles.clear()
+		for child in $Obstacles.get_children():
+			if child is WallObstacle:
+				obstacles.append(child)
+
+	if has_node("Diamonds"):
+		diamonds.clear()
+		for child in $Diamonds.get_children():
+			if child is Diamond:
+				diamonds.append(child)
+
+	if has_node("Trees"):
+		trees.clear()
+		for child in $Trees.get_children():
+			if child is Node2D:
+				trees.append(child)
+
+	# 0. Connect Path2D boundary if present
+	_connect_boundary_path()
+	if is_instance_valid(boundary_path) and boundary_path.curve and boundary_path.curve.point_count >= 3:
+		_update_from_boundary_path()
+
+	# 2. Build geometry & preview
 	if not outer_poly.is_empty():
 		_compute_bounds()
 		_build_outer_segments()
+		if floor_facets.is_empty():
+			var seed_int: int = int(abs(hash(course_name))) & 0x7FFFFFFF
+			generate_decorations(seed_int if seed_int != 0 else 12345)
+
+	queue_redraw()
+
+func _connect_boundary_path() -> void:
+	if not is_instance_valid(boundary_path):
+		if has_node("Boundary"):
+			var b = get_node("Boundary")
+			if b is Path2D:
+				boundary_path = b
+		elif has_node("Path2D"):
+			var b = get_node("Path2D")
+			if b is Path2D:
+				boundary_path = b
+
+	if is_instance_valid(boundary_path) and boundary_path.curve:
+		if not boundary_path.curve.changed.is_connected(_on_boundary_curve_changed):
+			boundary_path.curve.changed.connect(_on_boundary_curve_changed)
+
+func _on_boundary_curve_changed() -> void:
+	_update_from_boundary_path()
+
+func _update_from_boundary_path() -> void:
+	if not is_instance_valid(boundary_path) or not boundary_path.curve:
+		return
+	var curve: Curve2D = boundary_path.curve
+	if curve.point_count < 3:
+		return
+
+	var pts: PackedVector2Array = PackedVector2Array()
+	var has_beziers: bool = false
+	for i in range(curve.point_count):
+		if curve.get_point_in(i) != Vector2.ZERO or curve.get_point_out(i) != Vector2.ZERO:
+			has_beziers = true
+			break
+
+	if has_beziers:
+		pts = curve.get_baked_points()
+	else:
+		for i in range(curve.point_count):
+			pts.append(curve.get_point_position(i))
+
+	# If closed loop or duplicate end point, sanitize
+	if pts.size() >= 4 and pts[0].distance_to(pts[pts.size() - 1]) < 8.0:
+		pts.remove_at(pts.size() - 1)
+
+	var offset: Vector2 = boundary_path.position
+	if offset != Vector2.ZERO:
+		var shifted := PackedVector2Array()
+		for p in pts:
+			shifted.append(p + offset)
+		pts = shifted
+
+	outer_poly = pts
 
 func _compute_bounds() -> void:
 	if outer_poly.is_empty():
@@ -94,19 +211,22 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 	rng.seed = seed_val
 
 	# Clear previous instances
-	for child in obstacles_container.get_children():
-		child.queue_free()
-	for child in diamonds_container.get_children():
-		child.queue_free()
-	for child in trees_container.get_children():
-		child.queue_free()
+	if is_instance_valid(obstacles_container):
+		for child in obstacles_container.get_children():
+			child.queue_free()
+	if is_instance_valid(diamonds_container):
+		for child in diamonds_container.get_children():
+			child.queue_free()
+	if is_instance_valid(trees_container):
+		for child in trees_container.get_children():
+			child.queue_free()
 
 	obstacles.clear()
 	diamonds.clear()
 	trees.clear()
 
 	# Create Obstacles
-	if def.has("obstacles"):
+	if def.has("obstacles") and is_instance_valid(obstacles_container):
 		for obs_pts in def["obstacles"]:
 			var obs: WallObstacle = PREFAB_OBSTACLE.instantiate()
 			obs.polygon = PackedVector2Array(obs_pts)
@@ -122,7 +242,7 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 			finish_line = finish_line_node
 
 	# Create Diamonds
-	if def.has("diamonds"):
+	if def.has("diamonds") and is_instance_valid(diamonds_container):
 		for d in def["diamonds"]:
 			var dm: Diamond = PREFAB_DIAMOND.instantiate()
 			dm.position = Vector2(d["x"], d["y"])
@@ -130,7 +250,15 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 			diamonds_container.add_child(dm)
 			diamonds.append(dm)
 
-	# Generate low-poly floor facets
+	generate_decorations(seed_val)
+
+## Generates atmospheric floor facets, edge grass blades, wildflowers,
+## background ridge facets, and edge ledge trees based on corridor bounds.
+func generate_decorations(seed_val: int) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	# 1. Low-poly floor facets
 	floor_facets.clear()
 	var facet_colors: Array[Color] = [Palette.FLOOR_FACET_A, Palette.FLOOR_FACET_B, Palette.FLOOR_FACET_DARK]
 	for i in range(16):
@@ -142,7 +270,7 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 			"color": facet_colors[rng.randi() % facet_colors.size()]
 		})
 
-	# Generate edge grass tufts and wildflowers
+	# 2. Edge flora
 	grass_tufts.clear()
 	flowers.clear()
 	var flower_colors: Array[Color] = [Palette.FLOWER_WHITE, Palette.FLOWER_YELLOW, Palette.FLOWER_LAVENDER]
@@ -156,7 +284,7 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 
 		var inside_obs: bool = false
 		for obs in obstacles:
-			if GeometryUtils.point_in_polygon(p, obs.polygon):
+			if is_instance_valid(obs) and GeometryUtils.point_in_polygon(p, obs.polygon):
 				inside_obs = true
 				break
 		if inside_obs:
@@ -164,9 +292,10 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 
 		var edge_dist: float = GeometryUtils.dist_to_polygon_edges(p, outer_poly)
 		for obs in obstacles:
-			var od: float = GeometryUtils.dist_to_polygon_edges(p, obs.polygon)
-			if od < edge_dist:
-				edge_dist = od
+			if is_instance_valid(obs):
+				var od: float = GeometryUtils.dist_to_polygon_edges(p, obs.polygon)
+				if od < edge_dist:
+					edge_dist = od
 
 		if edge_dist < 34.0 and edge_dist > 4.0:
 			if rng.randf() < 0.65:
@@ -191,7 +320,7 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 					"color": flower_colors[rng.randi() % flower_colors.size()]
 				})
 
-	# Generate background ridge decor facets
+	# 3. Background ridge decor facets
 	ridge_decor.clear()
 	for i in range(22):
 		var rx: float = bounds.position.x - 360.0 + rng.randf() * (bounds.size.x + 720.0)
@@ -205,47 +334,34 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 			"color": Palette.WALL_RIDGE_MID if rng.randf() > 0.5 else Palette.WALL_RIDGE_TOP
 		})
 
-	# Generate top-down pine & birch trees
-	for tries in range(420):
-		if trees.size() >= 48:
-			break
-		var tx: float = bounds.position.x - 280.0 + rng.randf() * (bounds.size.x + 560.0)
-		var ty: float = bounds.position.y - 240.0 + rng.randf() * (bounds.size.y + 480.0)
-		var tp := Vector2(tx, ty)
-		if GeometryUtils.point_in_polygon(tp, outer_poly):
-			continue
-		var d_edge: float = GeometryUtils.dist_to_polygon_edges(tp, outer_poly)
-		if d_edge < 32.0 or d_edge > 270.0:
-			continue
-
-		var too_close: bool = false
-		for t_node in trees:
-			if tp.distance_to(t_node.position) < 52.0:
-				too_close = true
+	# 4. Generate trees if container has none placed and not in editor
+	if is_instance_valid(trees_container) and trees.is_empty() and not Engine.is_editor_hint():
+		for tries in range(420):
+			if trees.size() >= 48:
 				break
-		if too_close:
-			continue
+			var tx: float = bounds.position.x - 280.0 + rng.randf() * (bounds.size.x + 560.0)
+			var ty: float = bounds.position.y - 240.0 + rng.randf() * (bounds.size.y + 480.0)
+			var tp := Vector2(tx, ty)
+			if GeometryUtils.point_in_polygon(tp, outer_poly):
+				continue
+			var d_edge: float = GeometryUtils.dist_to_polygon_edges(tp, outer_poly)
+			if d_edge < 32.0 or d_edge > 270.0:
+				continue
 
-		var scale_val: float = 0.78 + rng.randf() * 0.45
-		var is_birch: bool = (rng.randf() < 0.34)
-		var tree_inst: Node2D = (PREFAB_BIRCH if is_birch else PREFAB_PINE).instantiate()
-		tree_inst.position = tp
-		tree_inst.set("tree_scale", scale_val)
-		tree_inst.set("seed_val", rng.randi() & 0x7FFFFFFF)
-		trees_container.add_child(tree_inst)
-		trees.append(tree_inst)
+			var too_close: bool = false
+			for t_node in trees:
+				if tp.distance_to(t_node.position) < 52.0:
+					too_close = true
+					break
+			if too_close:
+				continue
 
-	# Place tree on large obstacles
-	for obs in obstacles:
-		var c := Vector2.ZERO
-		for p: Vector2 in obs.polygon:
-			c += p
-		c /= float(obs.polygon.size())
-		var clearance: float = GeometryUtils.dist_to_polygon_edges(c, obs.polygon)
-		if GeometryUtils.point_in_polygon(c, obs.polygon) and clearance > 26.0:
-			var tree_inst: Node2D = PREFAB_PINE.instantiate()
-			tree_inst.position = obs.to_global(c)
-			tree_inst.set("tree_scale", clampf(clearance / 44.0, 0.58, 0.88))
+			var scale_val: float = 0.78 + rng.randf() * 0.45
+			var is_birch: bool = (rng.randf() < 0.34)
+			var tree_inst: Node2D = (PREFAB_BIRCH if is_birch else PREFAB_PINE).instantiate()
+			tree_inst.position = tp
+			tree_inst.set("tree_scale", scale_val)
+			tree_inst.set("seed_val", rng.randi() & 0x7FFFFFFF)
 			trees_container.add_child(tree_inst)
 			trees.append(tree_inst)
 
@@ -278,6 +394,15 @@ func trigger_segment_flash(seg: Dictionary) -> void:
 		seg["obstacle"].trigger_flash(seg["seg_idx"])
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		_connect_boundary_path()
+		if has_node("StartPoint"):
+			var sp = get_node("StartPoint")
+			if sp is Node2D and sp.position != start_position:
+				start_position = sp.position
+				queue_redraw()
+		return
+
 	time_elapsed += delta
 	var needs_redraw: bool = false
 	for i in range(outer_flashes.size()):
@@ -321,7 +446,7 @@ func _draw() -> void:
 
 		# Edge flora: grass tufts & flowers
 		for g in grass_tufts:
-			var sway: float = sin(time_elapsed * 1.8 + g["phase"]) * 1.1
+			var sway: float = sin(time_elapsed * 1.8 + g["phase"]) * 1.1 if not Engine.is_editor_hint() else 0.0
 			for bl in g["blades"]:
 				var p1: Vector2 = g["pos"] + Vector2(bl["dx"], 0.0)
 				var p2: Vector2 = p1 + Vector2(bl["lean"] + sway, -bl["h"])
@@ -340,3 +465,10 @@ func _draw() -> void:
 			var col: Color = Palette.CONTOUR_FLASH if f_val > 0.02 else Palette.CONTOUR_LINE
 			var width: float = 2.4 + f_val * 1.8 if f_val > 0.02 else 2.2
 			draw_line(a, b, col, width, true)
+
+	# 3. In-Editor Ball Spawn Preview
+	if Engine.is_editor_hint():
+		draw_circle(start_position + Vector2(2, 3), 11.0, Palette.SHADOW)
+		draw_circle(start_position, 11.0, Palette.BALL_BODY)
+		draw_circle(start_position - Vector2(3, 3), 3.0, Color.WHITE)
+		draw_arc(start_position, 16.0, 0.0, TAU, 32, Color(0.98, 0.89, 0.4, 0.75), 1.5, true)

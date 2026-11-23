@@ -85,7 +85,9 @@ func _draw() -> void:
 		var hit_pt: Vector2 = best_hit["point"]
 		var normal: Vector2 = best_hit["normal"]
 
-		# Yellow impact marker
+		# Yellow impact marker with animated pulse ripple
+		var ripple: float = fmod(time_elapsed * 4.0, 1.0)
+		draw_arc(hit_pt, 4.0 + ripple * 8.0, 0.0, TAU, 16, Color(0.98, 0.89, 0.4, (1.0 - ripple) * 0.6), 1.5, true)
 		draw_circle(hit_pt, 3.8, Palette.DIAMOND_CORE)
 
 		# Reflected direction

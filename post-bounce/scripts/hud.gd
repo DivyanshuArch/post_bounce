@@ -25,9 +25,21 @@ func _ready() -> void:
 	clear_banner.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	clear_banner.scale = Vector2(0.92, 0.92)
 
-	reset_btn.pressed.connect(func(): reset_requested.emit())
-	skip_btn.pressed.connect(func(): skip_requested.emit())
-	sound_btn.pressed.connect(func(): sound_toggled.emit())
+	reset_btn.pressed.connect(func():
+		SoundManager.play_ui_click()
+		reset_requested.emit()
+	)
+	skip_btn.pressed.connect(func():
+		SoundManager.play_ui_click()
+		skip_requested.emit()
+	)
+	sound_btn.pressed.connect(func():
+		SoundManager.play_ui_click()
+		sound_toggled.emit()
+	)
+
+	for btn in [reset_btn, skip_btn, sound_btn]:
+		btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
 
 func update_course_info(course_num: int, shots: int, animate_pop: bool = false) -> void:
 	course_label_lbl.text = "COURSE %d" % course_num
