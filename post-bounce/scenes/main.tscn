@@ -1,19 +1,20 @@
 [gd_scene format=3 uid="uid://c7m2y4lav1w3x"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://c7mvxln4araef" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://b2n4m8y6k1v3x" path="res://scenes/prefabs/course.tscn" id="2_course"]
 [ext_resource type="PackedScene" uid="uid://dm0k7q1x3p81a" path="res://scenes/prefabs/ball.tscn" id="3_ball"]
-[ext_resource type="Script" path="res://scripts/aim_guide.gd" id="4_aim"]
-[ext_resource type="Script" path="res://scripts/particle_manager.gd" id="5_particles"]
+[ext_resource type="Script" uid="uid://cuu4d01dhlsuy" path="res://scripts/aim_guide.gd" id="4_aim"]
+[ext_resource type="Script" uid="uid://byv0iw2rmcusj" path="res://scripts/particle_manager.gd" id="5_particles"]
 [ext_resource type="PackedScene" uid="uid://cb5k1d3m8y7v2" path="res://scenes/prefabs/atmosphere.tscn" id="6_atmo"]
 [ext_resource type="PackedScene" uid="uid://b1n5m7q2k8x3v" path="res://scenes/prefabs/hud.tscn" id="7_hud"]
+[ext_resource type="AudioStream" uid="uid://bc0jlbw8ds4l1" path="res://assets/sfx/music/forest-stroll-mix.ogg" id="8_tipki"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=808715007]
 script = ExtResource("1_main")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=1880036558]
 
-[node name="Background" type="ColorRect" parent="World"]
+[node name="Background" type="ColorRect" parent="World" unique_id=1366992129]
 offset_left = -3000.0
 offset_top = -3000.0
 offset_right = 5000.0
@@ -21,19 +22,28 @@ offset_bottom = 5000.0
 mouse_filter = 2
 color = Color(0.129, 0.173, 0.149, 1)
 
-[node name="Course" parent="World" instance=ExtResource("2_course")]
+[node name="Course" parent="World" unique_id=27837542 instance=ExtResource("2_course")]
 
-[node name="Ball" parent="World" instance=ExtResource("3_ball")]
+[node name="Ball" parent="World" unique_id=681879848 instance=ExtResource("3_ball")]
+use_parent_material = true
+restitution = 1.87
+damping = 1.92
+linear_drag = 15.0
+stop_speed = 8.0
 
-[node name="AimGuide" type="Node2D" parent="World"]
+[node name="AimGuide" type="Node2D" parent="World" unique_id=2055266640]
 script = ExtResource("4_aim")
 
-[node name="ParticleManager" type="Node2D" parent="World"]
+[node name="ParticleManager" type="Node2D" parent="World" unique_id=1723941711]
 script = ExtResource("5_particles")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=786694907]
 position = Vector2(400, 300)
 
-[node name="Atmosphere" parent="." instance=ExtResource("6_atmo")]
+[node name="Atmosphere" parent="." unique_id=349986679 instance=ExtResource("6_atmo")]
 
-[node name="HUD" parent="." instance=ExtResource("7_hud")]
+[node name="HUD" parent="." unique_id=617048292 instance=ExtResource("7_hud")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=335797208]
+stream = ExtResource("8_tipki")
+autoplay = true
