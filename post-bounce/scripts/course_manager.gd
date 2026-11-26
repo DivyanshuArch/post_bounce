@@ -3,6 +3,12 @@ extends RefCounted
 
 ## Handcrafted courses 1-6 + endless procedural generator (7+).
 
+static func get_course_par(index: int) -> int:
+	var pars: Array[int] = [1, 2, 2, 3, 2, 2, 3, 2, 3]
+	if index >= 0 and index < pars.size():
+		return pars[index]
+	return 2 + (index % 2)
+
 static func get_handcrafted_course(index: int) -> Dictionary:
 	var defs: Array = [
 		# COURSE 1: MOONLIT BEND

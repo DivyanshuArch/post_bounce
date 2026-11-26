@@ -1,0 +1,451 @@
+[gd_scene format=3 uid="uid://cx7y2k9v1m4w8"]
+
+[ext_resource type="Script" path="res://scripts/home_hub_modal.gd" id="1_hub"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_gem.svg" id="2_gem"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_star.svg" id="3_star"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_shop.svg" id="4_shop"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_flag.svg" id="5_flag"]
+[ext_resource type="Texture2D" path="res://assets/icons/icon_settings.svg" id="6_sett"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.082, 0.118, 0.098, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.65, 0.46, 0.6)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_active"]
+bg_color = Color(0.14, 0.2, 0.16, 0.9)
+border_width_bottom = 2
+border_color = Color(0.3, 0.8, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_inactive"]
+bg_color = Color(0.1, 0.14, 0.11, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_preview_card"]
+bg_color = Color(0.06, 0.09, 0.07, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.4, 0.3, 0.5)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn"]
+bg_color = Color(0.95, 0.97, 0.95, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pill"]
+bg_color = Color(0.12, 0.17, 0.14, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.56, 0.47, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="HomeHubModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hub")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.06, 0.05, 0.82)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelCard" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(740, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/PanelCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TopBar" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 0.95, 1)
+theme_override_font_sizes/font_size = 20
+text = "HOME & BAZAAR"
+
+[node name="Spacer" type="Control" parent="CenterContainer/PanelCard/Margin/VBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GemsContainer" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="GemsIcon" type="TextureRect" parent="CenterContainer/PanelCard/Margin/VBox/TopBar/GemsContainer"]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("2_gem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GemsCounterLabel" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/TopBar/GemsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.85, 0.32, 1)
+theme_override_font_sizes/font_size = 15
+text = "50"
+
+[node name="StarsContainer" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StarsIcon" type="TextureRect" parent="CenterContainer/PanelCard/Margin/VBox/TopBar/StarsContainer"]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StarsCounterLabel" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/TopBar/StarsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.89, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "0"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.85, 0.92, 0.88, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pill")
+text = "X"
+
+[node name="TabsBar" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TabShopBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/TabsBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 38)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.95, 0.97, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_active")
+icon = ExtResource("4_shop")
+icon_alignment = 0
+expand_icon = true
+text = " SKINS"
+
+[node name="TabLevelsBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/TabsBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 38)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.95, 0.97, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
+icon = ExtResource("5_flag")
+icon_alignment = 0
+expand_icon = true
+text = " COURSES"
+
+[node name="TabSettingsBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/TabsBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 38)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.95, 0.97, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
+icon = ExtResource("6_sett")
+icon_alignment = 0
+expand_icon = true
+text = " SETTINGS"
+
+[node name="PanelsArea" type="Control" parent="CenterContainer/PanelCard/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ShopPanel" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="PreviewCard" type="PanelContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_preview_card")
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="BallPreviewControl" type="Control" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="InfoBox" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="SkinNameLabel" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox/InfoBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.97, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "MOONLIT PEARL"
+horizontal_alignment = 1
+
+[node name="SkinRarityLabel" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox/InfoBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.64, 0.72, 1)
+theme_override_font_sizes/font_size = 11
+text = "COMMON"
+horizontal_alignment = 1
+
+[node name="SkinDescLabel" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox/InfoBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.78, 0.75, 0.85)
+theme_override_font_sizes/font_size = 11
+text = "Classic luminescent ivory sphere with soft lunar aura and silver stardust trail."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="SkinActionBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/PreviewCard/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.08, 0.13, 0.1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "EQUIPPED"
+
+[node name="SkinsScroll" type="ScrollContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+
+[node name="SkinsGridContainer" type="GridContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/ShopPanel/SkinsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="LevelsPanel" type="ScrollContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="LevelsGridContainer" type="GridContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/LevelsPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
+columns = 6
+
+[node name="SettingsPanel" type="VBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -140.0
+offset_right = 220.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="AudioRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel"]
+layout_mode = 2
+
+[node name="Lbl" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/AudioRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "SFX Volume"
+
+[node name="SfxSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/AudioRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+value = 100.0
+
+[node name="MusicRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel"]
+layout_mode = 2
+
+[node name="Lbl" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/MusicRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/MusicRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+value = 80.0
+
+[node name="SensRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel"]
+layout_mode = 2
+
+[node name="Lbl" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/SensRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "Aim Sensitivity"
+
+[node name="SensitivitySlider" type="HSlider" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/SensRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 25.0
+max_value = 200.0
+value = 100.0
+
+[node name="TrajRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel"]
+layout_mode = 2
+
+[node name="Lbl" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/TrajRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "Trajectory Guide"
+
+[node name="TrajBtns" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/TrajRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TrajFullBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/TrajRow/TrajBtns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pill")
+text = "FULL"
+
+[node name="TrajShortBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/TrajRow/TrajBtns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pill")
+text = "SHORT"
+
+[node name="TrajOffBtn" type="Button" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/TrajRow/TrajBtns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pill")
+text = "OFF"
+
+[node name="ShakeRow" type="HBoxContainer" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel"]
+layout_mode = 2
+
+[node name="Lbl" type="Label" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/ShakeRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "Screen Shake"
+
+[node name="ShakeToggle" type="CheckButton" parent="CenterContainer/PanelCard/Margin/VBox/PanelsArea/SettingsPanel/ShakeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true

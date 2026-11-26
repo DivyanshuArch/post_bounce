@@ -203,8 +203,11 @@ func draw_atmosphere(ctrl: Control) -> void:
 			var arch: Array = c["loops"][l_idx]
 			var arch_pts: PackedVector2Array = PackedVector2Array()
 			for pt: Vector2 in arch:
-				arch_pts.append(sp + pt)
-			ctrl.draw_polyline(arch_pts, Palette.CLOUD_LINE, 1.55, true)
+				var candidate: Vector2 = sp + pt
+				if candidate.is_finite() and (arch_pts.is_empty() or candidate.distance_to(arch_pts[-1]) >= 1.5):
+					arch_pts.append(candidate)
+			if arch_pts.size() >= 2:
+				ctrl.draw_polyline(arch_pts, Palette.CLOUD_LINE, 1.55, true)
 
 	# 3. Tiny gliding bird silhouettes
 	for b in birds:
@@ -217,7 +220,9 @@ func draw_atmosphere(ctrl: Control) -> void:
 		var p_left := xf * Vector2(-s, -s * 0.7 + wing_y)
 		var p_mid := xf * Vector2(0.0, 0.0)
 		var p_right := xf * Vector2(-s, s * 0.7 - wing_y)
-		ctrl.draw_polyline([p_left, p_mid, p_right], Palette.BIRD, 1.5, true)
+		if p_left.is_finite() and p_mid.is_finite() and p_right.is_finite():
+			if p_left.distance_to(p_mid) > 1.0 and p_right.distance_to(p_mid) > 1.0:
+				ctrl.draw_polyline(PackedVector2Array([p_left, p_mid, p_right]), Palette.BIRD, 1.5, true)
 
 	# 4. Drifting themed firefly specks
 	var firefly_base: Color = Palette.FIREFLY

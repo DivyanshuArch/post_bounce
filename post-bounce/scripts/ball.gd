@@ -41,22 +41,15 @@ const SPHERE_MARKERS: Array[Vector3] = [
 	Vector3(0.577, -0.577, -0.577)
 ]
 
-# Boundary Bounce Color Cycling (Luminous Gemstone Spectrum)
-const BOUNCE_PALETTE: Array[Color] = [
-	Color("#f4f2ec"), # 0: Moonlit Pearl
-	Color("#38bdf8"), # 1: Electric Azure
-	Color("#fb7185"), # 2: Sakura Rose
-	Color("#facc15"), # 3: Radiant Amber Gold
-	Color("#4ade80"), # 4: Vivid Emerald
-	Color("#c084fc"), # 5: Luminous Orchid
-	Color("#f97316"), # 6: Saffron Orange
-	Color("#22d3ee"), # 7: Celestial Turquoise
-	Color("#ec4899"), # 8: Bright Magenta
-	Color("#a855f7")  # 9: Royal Violet
-]
-var color_index: int = 0
+# Impact Flash Color (Single flash on bounce, smoothly reverts to equipped skin color)
+const IMPACT_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
+
 var current_color: Color = Color("#f4f2ec")
-var target_color: Color = Color("#f4f2ec")
+var base_color: Color = Color("#f4f2ec")
+
+# Equipped Ball Skin configuration
+var current_skin_id: String = "moonlit_pearl"
+var skin_data: Dictionary = {}
 
 # Smooth top-level ribbon trail
 var trail_line: Line2D
@@ -68,7 +61,26 @@ const MIN_TRAIL_DIST: float = 3.5
 func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_setup_trail_line()
+		if GameSettings:
+			apply_skin(GameSettings.equipped_skin)
+			if not GameSettings.skin_equipped.is_connected(apply_skin):
+				GameSettings.skin_equipped.connect(apply_skin)
+		else:
+			apply_skin("moonlit_pearl")
+	else:
+		apply_skin("moonlit_pearl")
 	queue_redraw()
+
+func apply_skin(skin_id: String) -> void:
+	current_skin_id = skin_id
+	skin_data = SkinManager.get_skin_by_id(skin_id)
+	base_color = skin_data.get("core_color", Color("#f4f2ec"))
+	current_color = base_color
+	if is_instance_valid(trail_line):
+		trail_line.width = radius * 1.8 * skin_data.get("trail_width_scale", 1.0)
+	_update_trail_color(skin_data.get("trail_color", base_color))
+	queue_redraw()
+
 
 func _setup_trail_line() -> void:
 	trail_line = Line2D.new()
@@ -80,12 +92,6 @@ func _setup_trail_line() -> void:
 	trail_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
 	trail_line.end_cap_mode = Line2D.LINE_CAP_ROUND
 	trail_line.antialiased = true
-
-	# Width curve: smooth taper from head to tail
-	var curve := Curve.new()
-	curve.add_point(Vector2(0.0, 1.0), 0.0, -0.3)
-	curve.add_point(Vector2(1.0, 0.0), -1.8, 0.0)
-	trail_line.width_curve = curve
 
 	# Gradient: translucent moonlit ivory fading to zero alpha
 	var grad := Gradient.new()
@@ -118,9 +124,9 @@ func _process(delta: float) -> void:
 
 	time_elapsed += delta
 	if hit_flash > 0.0:
-		hit_flash = maxf(0.0, hit_flash - delta * 5.0)
+		hit_flash = maxf(0.0, hit_flash - delta * 6.0)
 
-	current_color = current_color.lerp(target_color, delta * 14.0)
+	current_color = current_color.lerp(base_color, delta * 12.0)
 	_update_rolling(delta)
 	_update_trail(delta)
 	queue_redraw()
@@ -142,12 +148,24 @@ func _update_trail(delta: float) -> void:
 			trail_points.push_front(global_position)
 			trail_lifetimes.push_front(TRAIL_LIFETIME)
 
-	# Update the Line2D geometry
-	if trail_points.size() >= 1:
-		var pts: PackedVector2Array = PackedVector2Array()
+	# Update the Line2D geometry with strict polyline distance checking
+	var pts: PackedVector2Array = PackedVector2Array()
+	if is_moving and trail_points.size() >= 1:
 		pts.append(global_position)
 		for p: Vector2 in trail_points:
-			pts.append(p)
+			if p.is_finite() and p.distance_to(pts[-1]) >= 2.0:
+				pts.append(p)
+	elif trail_points.size() >= 2:
+		for p: Vector2 in trail_points:
+			if p.is_finite() and (pts.is_empty() or p.distance_to(pts[-1]) >= 2.0):
+				pts.append(p)
+
+	# Total polyline length check
+	var total_len: float = 0.0
+	for i in range(pts.size() - 1):
+		total_len += pts[i].distance_to(pts[i + 1])
+
+	if pts.size() >= 2 and total_len >= 4.0:
 		trail_line.points = pts
 	else:
 		trail_line.clear_points()
@@ -173,10 +191,8 @@ func reset_to(pos: Vector2) -> void:
 	is_moving = false
 	bounce_count = 0
 	hit_flash = 0.0
-	color_index = 0
-	target_color = BOUNCE_PALETTE[0]
-	current_color = target_color
-	_update_trail_color(target_color)
+	current_color = base_color
+	_update_trail_color(skin_data.get("trail_color", base_color))
 	ball_basis = Basis.IDENTITY
 	trail_points.clear()
 	trail_lifetimes.clear()
@@ -224,46 +240,53 @@ func step_physics(delta: float, segments: Array, finish_data: Dictionary, diamon
 		var step_move: Vector2 = velocity * sub_dt
 		global_position += step_move
 
-		# 1. Continuous crossing check: did trajectory pass through any wall segment?
+		# 1. Continuous crossing check: find the earliest wall crossed this sub-step
+		var earliest_t: float = 1.0
+		var earliest_hit = null
+		var earliest_seg: Dictionary = {}
+		var earliest_normal: Vector2 = Vector2.ZERO
+
 		for seg: Dictionary in segments:
 			var a: Vector2 = seg["a"]
 			var b: Vector2 = seg["b"]
 			var x_res = GeometryUtils.ray_segment_intersect(prev_pos.x, prev_pos.y, step_move.x, step_move.y, a.x, a.y, b.x, b.y)
-			if x_res != null and x_res["t"] <= 1.0:
+			if x_res != null and x_res["t"] <= earliest_t and x_res["t"] >= 0.0:
 				var s_vec: Vector2 = b - a
 				var s_len: float = s_vec.length()
 				if s_len > 1e-4:
 					var n_cand := Vector2(-s_vec.y, s_vec.x) / s_len
 					if velocity.dot(n_cand) > 0.0:
 						n_cand = -n_cand
-					var hit_pt: Vector2 = x_res["point"]
-					global_position = hit_pt + n_cand * (radius + 0.1)
+					earliest_t = x_res["t"]
+					earliest_hit = x_res["point"]
+					earliest_seg = seg
+					earliest_normal = n_cand
 
-					var vn: float = velocity.dot(n_cand)
-					if vn < 0.0:
-						var impact_speed: float = -vn
-						velocity -= (1.0 + restitution) * vn * n_cand
-						bounce_count += 1
-						hit_flash = 1.0
-						seg["flash"] = 1.0
+		if earliest_hit != null:
+			global_position = earliest_hit + earliest_normal * (radius + 0.1)
+			var vn: float = velocity.dot(earliest_normal)
+			if vn < 0.0:
+				var impact_speed: float = -vn
+				velocity = velocity - (1.0 + restitution) * vn * earliest_normal
+				velocity = velocity.limit_length(PhysicsConstants.MAX_LAUNCH_SPEED)
+				bounce_count += 1
+				hit_flash = 1.0
+				current_color = IMPACT_COLOR
+				earliest_seg["flash"] = 1.0
 
-						color_index = (color_index + 1) % BOUNCE_PALETTE.size()
-						target_color = BOUNCE_PALETTE[color_index]
-						_update_trail_color(target_color)
+				if earliest_seg.has("course") and is_instance_valid(earliest_seg["course"]):
+					earliest_seg["course"].trigger_segment_flash(earliest_seg)
+				elif earliest_seg.has("obstacle") and is_instance_valid(earliest_seg["obstacle"]):
+					earliest_seg["obstacle"].trigger_flash(earliest_seg["seg_idx"])
 
-						if seg.has("course") and is_instance_valid(seg["course"]):
-							seg["course"].trigger_segment_flash(seg)
-						elif seg.has("obstacle") and is_instance_valid(seg["obstacle"]):
-							seg["obstacle"].trigger_flash(seg["seg_idx"])
+				if not trail_points.is_empty() and earliest_hit.distance_to(trail_points[0]) >= 2.0:
+					trail_points.push_front(earliest_hit)
+					trail_lifetimes.push_front(TRAIL_LIFETIME)
 
-						if not trail_points.is_empty() and hit_pt.distance_to(trail_points[0]) >= 2.0:
-							trail_points.push_front(hit_pt)
-							trail_lifetimes.push_front(TRAIL_LIFETIME)
-
-						bounced.emit(hit_pt, n_cand, impact_speed, bounce_count)
-						break
+				bounced.emit(earliest_hit, earliest_normal, impact_speed, bounce_count)
 
 		# 2. Discrete proximity & penetration resolution
+		var bounced_in_discrete: bool = (earliest_hit != null)
 		for seg: Dictionary in segments:
 			var a: Vector2 = seg["a"]
 			var b: Vector2 = seg["b"]
@@ -283,21 +306,20 @@ func step_physics(delta: float, segments: Array, finish_data: Dictionary, diamon
 					if velocity.dot(normal) > 0.0:
 						normal = -normal
 
-				# Push ball away from wall surface
-				var overlap: float = radius - d + 0.05
+				# Push ball safely away from wall surface
+				var overlap: float = radius - d + 0.08
 				global_position += normal * overlap
 
 				var vn: float = velocity.dot(normal)
-				if vn < 0.0:
+				if vn < 0.0 and not bounced_in_discrete:
+					bounced_in_discrete = true
 					var impact_speed: float = -vn
-					velocity -= (1.0 + restitution) * vn * normal
+					velocity = velocity - (1.0 + restitution) * vn * normal
+					velocity = velocity.limit_length(PhysicsConstants.MAX_LAUNCH_SPEED)
 					bounce_count += 1
 					hit_flash = 1.0
+					current_color = IMPACT_COLOR
 					seg["flash"] = 1.0
-
-					color_index = (color_index + 1) % BOUNCE_PALETTE.size()
-					target_color = BOUNCE_PALETTE[color_index]
-					_update_trail_color(target_color)
 
 					if seg.has("course") and is_instance_valid(seg["course"]):
 						seg["course"].trigger_segment_flash(seg)
@@ -320,25 +342,26 @@ func step_physics(delta: float, segments: Array, finish_data: Dictionary, diamon
 					var in_norm: Vector2 = containment["inward_normal"]
 					var edge_dist: float = local_pos.distance_to(c_edge_local)
 
-					# If the ball has breached the boundary into the void
-					if edge_dist > 5.0 or (velocity.dot(in_norm) < 0.0 and edge_dist > 2.0):
+					# If the ball has breached deep outside the outer polygon
+					if edge_dist > 120.0 or not course.bounds.grow(90.0).has_point(local_pos):
 						is_moving = false
 						velocity = Vector2.ZERO
 						out_of_bounds.emit()
 						return
 					else:
-						# Micro-grazing containment
+						# Reliable inward clamp
 						var c_edge_global: Vector2 = course.to_global(c_edge_local)
 						global_position = c_edge_global + in_norm * (radius + 0.5)
 						if velocity.dot(in_norm) < 0.0:
 							velocity = velocity.bounce(in_norm) * restitution
+						else:
+							velocity = in_norm * (velocity.length() * restitution)
+						velocity = velocity.limit_length(PhysicsConstants.MAX_LAUNCH_SPEED)
 						bounce_count += 1
 						hit_flash = 1.0
-						color_index = (color_index + 1) % BOUNCE_PALETTE.size()
-						target_color = BOUNCE_PALETTE[color_index]
-						_update_trail_color(target_color)
+						current_color = IMPACT_COLOR
 						bounced.emit(c_edge_global, in_norm, velocity.length(), bounce_count)
-			elif not course.bounds.grow(60.0).has_point(local_pos):
+			elif not course.bounds.grow(100.0).has_point(local_pos):
 				is_moving = false
 				velocity = Vector2.ZERO
 				out_of_bounds.emit()
@@ -379,26 +402,43 @@ func step_physics(delta: float, segments: Array, finish_data: Dictionary, diamon
 			velocity = (velocity / cur_speed) * damped
 
 func _draw() -> void:
+	var motif: String = str(skin_data.get("motif", "lunar"))
+
 	# 1. Stationary ready pulse halo
 	if not is_moving:
 		var pulse: float = 0.5 + 0.5 * sin(time_elapsed * 3.4)
-		var halo_col := Color(current_color.r, current_color.g, current_color.b, 0.18 + pulse * 0.18)
-		draw_arc(Vector2.ZERO, radius + 5.0 + pulse * 3.0, 0.0, TAU, 32, halo_col, 1.5, true)
+		var custom_halo: Color = skin_data.get("halo_color", Color(current_color.r, current_color.g, current_color.b, 0.28))
+		var halo_col := Color(custom_halo.r, custom_halo.g, custom_halo.b, custom_halo.a * (0.6 + pulse * 0.5))
+		var halo_r: float = radius + 5.0 + pulse * 3.2
+		draw_arc(Vector2.ZERO, halo_r, 0.0, TAU, 32, halo_col, 1.8, true)
+
+		# Motif-specific halo flair
+		if motif == "solar":
+			for i in range(8):
+				var ray_ang: float = float(i) * TAU / 8.0 + time_elapsed * 1.5
+				var r_p1 := Vector2(cos(ray_ang), sin(ray_ang)) * (halo_r - 1.0)
+				var r_p2 := Vector2(cos(ray_ang), sin(ray_ang)) * (halo_r + 4.0 + pulse * 2.5)
+				draw_line(r_p1, r_p2, halo_col, 1.5)
+		elif motif == "rainbow":
+			var rb_hue: float = fmod(time_elapsed * 0.35, 1.0)
+			var rb_col := Color.from_hsv(rb_hue, 0.8, 1.0, 0.35 + pulse * 0.25)
+			draw_arc(Vector2.ZERO, halo_r + 2.5, 0.0, TAU, 32, rb_col, 1.5, true)
 
 	# 2. Ground drop shadow
 	draw_circle(Vector2(2.5, 3.5), radius * 1.02, Palette.SHADOW)
 
 	# 3. Base shaded sphere (darker bottom-right rim)
-	var shade_col := current_color.darkened(0.35)
+	var shade_col: Color = skin_data.get("shade_color", current_color.darkened(0.35))
 	draw_circle(Vector2.ZERO, radius, shade_col)
 
 	# 4. Main sphere body (color shifts on bounce; white hit-flash)
-	var body_col := Color.WHITE if hit_flash > 0.08 else current_color
+	var body_col: Color = Color.WHITE if hit_flash > 0.08 else current_color
 	draw_circle(Vector2(-0.8, -0.8), radius * 0.9, body_col)
 
 	# 5. 3D Rolling Equator Meridian Seam
 	var seam_pts: PackedVector2Array = PackedVector2Array()
-	var seam_col := Color(current_color.r * 1.25, current_color.g * 1.25, current_color.b * 1.25, 0.52)
+	var custom_seam: Color = skin_data.get("seam_color", Color(current_color.r * 1.25, current_color.g * 1.25, current_color.b * 1.25, 0.52))
+	var seam_col := custom_seam
 	for i in range(25):
 		var t: float = float(i) * TAU / 24.0
 		var local_pt := Vector3(cos(t), sin(t), 0.0)
@@ -412,15 +452,33 @@ func _draw() -> void:
 	if seam_pts.size() >= 2:
 		draw_polyline(seam_pts, seam_col, 1.8, true)
 
-	# 6. 3D Rolling Surface Markers (craters / dots rotating around sphere)
-	var dot_col := Color(current_color.r * 0.65, current_color.g * 0.65, current_color.b * 0.65, 0.75)
+	# 6. 3D Rolling Surface Markers (craters / dots / runes rotating around sphere)
+	var custom_dot: Color = skin_data.get("dot_color", Color(current_color.r * 0.65, current_color.g * 0.65, current_color.b * 0.65, 0.75))
+	var dot_col := custom_dot
 	for p: Vector3 in SPHERE_MARKERS:
 		var wp: Vector3 = ball_basis * p
 		if wp.z > 0.08:
 			var p2d := Vector2(wp.x, wp.y) * (radius * 0.86)
 			var d_size: float = radius * 0.18 * wp.z
-			draw_circle(p2d, d_size, dot_col)
-			draw_circle(p2d, d_size * 0.5, Color(1.0, 1.0, 1.0, wp.z * 0.8))
+			if motif == "cyber":
+				# Diamond/square matrix node
+				var rect := Rect2(p2d - Vector2(d_size * 0.6, d_size * 0.6), Vector2(d_size * 1.2, d_size * 1.2))
+				draw_rect(rect, dot_col)
+			elif motif == "sakura":
+				# Petal dot
+				draw_circle(p2d, d_size * 0.9, dot_col)
+				draw_circle(p2d + Vector2(1.0, 0.0), d_size * 0.45, Color("#fce7f3"))
+			else:
+				draw_circle(p2d, d_size, dot_col)
+				draw_circle(p2d, d_size * 0.5, Color(1.0, 1.0, 1.0, wp.z * 0.8))
 
 	# 7. Stationary specular reflection highlight (upper-left)
-	draw_circle(Vector2(-3.5, -3.5), radius * 0.28, Color(1.0, 1.0, 1.0, 0.92))
+	if motif == "gold":
+		# Golden royal cross glint
+		var hl_pos := Vector2(-3.5, -3.5)
+		draw_circle(hl_pos, radius * 0.28, Color(1.0, 1.0, 0.9, 0.95))
+		draw_line(hl_pos + Vector2(-4.0, 0.0), hl_pos + Vector2(4.0, 0.0), Color("#ffffff"), 1.2)
+		draw_line(hl_pos + Vector2(0.0, -4.0), hl_pos + Vector2(0.0, 4.0), Color("#ffffff"), 1.2)
+	else:
+		draw_circle(Vector2(-3.5, -3.5), radius * 0.28, Color(1.0, 1.0, 1.0, 0.92))
+

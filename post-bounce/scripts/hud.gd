@@ -1,13 +1,16 @@
 class_name HUD
 extends CanvasLayer
 
-## Minimalist HUD overlay with animated shot counter, course label,
-## auto-fading controls hint, course clear banner, and corner controls.
+## Minimalist HUD overlay with animated shot counter, course/par label,
+## Home Hub button, Victory Modal, and corner controls.
 
 signal reset_requested()
+signal retry_requested()
 signal skip_requested()
 signal sound_toggled()
-signal retry_requested()
+signal home_requested()
+signal next_course_requested()
+signal level_selected(course_index: int)
 
 @onready var shot_counter_lbl: Label = %ShotCounter
 @onready var course_label_lbl: Label = %CourseLabel
@@ -16,14 +19,18 @@ signal retry_requested()
 @onready var clear_title: Label = %ClearTitle
 @onready var clear_sub: Label = %ClearSub
 
+# Corner buttons
+@onready var home_btn: Button = %HomeButton
 @onready var reset_btn: Button = %ResetButton
-@onready var skip_btn: Button = %SkipButton
-@onready var sound_btn: Button = %SoundButton
 
+# Modals
 @onready var retry_modal: Control = %RetryModal
 @onready var retry_modal_btn: Button = %RetryModalButton
 @onready var retry_title: Label = %RetryTitle
 @onready var retry_sub: Label = %RetrySub
+
+@onready var victory_modal: VictoryModal = $VictoryModal
+@onready var home_hub_modal: HomeHubModal = $HomeHubModal
 
 var has_shot_once: bool = false
 var is_retry_visible: bool = false
@@ -50,21 +57,38 @@ func _ready() -> void:
 		)
 		retry_modal_btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
 
-	reset_btn.pressed.connect(func():
-		SoundManager.play_ui_click()
-		reset_requested.emit()
-	)
-	skip_btn.pressed.connect(func():
-		SoundManager.play_ui_click()
-		skip_requested.emit()
-	)
-	sound_btn.pressed.connect(func():
-		SoundManager.play_ui_click()
-		sound_toggled.emit()
-	)
+	if is_instance_valid(home_btn):
+		home_btn.pressed.connect(func():
+			SoundManager.play_ui_click()
+			open_home_hub("SHOP")
+			home_requested.emit()
+		)
+		home_btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
 
-	for btn in [reset_btn, skip_btn, sound_btn]:
-		btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
+	if is_instance_valid(reset_btn):
+		reset_btn.pressed.connect(func():
+			SoundManager.play_ui_click()
+			reset_requested.emit()
+		)
+		reset_btn.mouse_entered.connect(func(): SoundManager.play_ui_hover())
+
+	# Connect modals
+	if is_instance_valid(victory_modal):
+		victory_modal.next_course_requested.connect(func(): next_course_requested.emit())
+		victory_modal.replay_requested.connect(func(): reset_requested.emit())
+		victory_modal.shop_requested.connect(func(): open_home_hub("SHOP"))
+		victory_modal.home_requested.connect(func(): open_home_hub("LEVELS"))
+
+	if is_instance_valid(home_hub_modal):
+		home_hub_modal.level_selected.connect(func(idx): level_selected.emit(idx))
+
+func open_home_hub(initial_tab: String = "SHOP") -> void:
+	if is_instance_valid(home_hub_modal):
+		home_hub_modal.open(initial_tab)
+
+func show_victory_modal(course_num: int, course_name: String, shots: int, par: int, diamonds_collected: int, total_diamonds: int) -> void:
+	if is_instance_valid(victory_modal):
+		victory_modal.open(course_num, course_name, shots, par, diamonds_collected, total_diamonds)
 
 func show_out_of_bounds(reason: String = "The ball fell into the void") -> void:
 	if not is_instance_valid(retry_modal):
@@ -95,15 +119,11 @@ func hide_out_of_bounds() -> void:
 			retry_modal.visible = false
 	)
 
-
-const ICON_SOUND_ON = preload("res://assets/icons/icon_sound_on.svg")
-const ICON_SOUND_OFF = preload("res://assets/icons/icon_sound_off.svg")
-
-func update_course_info(course_num: int, shots: int, animate_pop: bool = false, custom_name: String = "") -> void:
+func update_course_info(course_num: int, shots: int, animate_pop: bool = false, custom_name: String = "", par: int = 2) -> void:
 	if not custom_name.is_empty():
-		course_label_lbl.text = "COURSE %d | %s" % [course_num, custom_name.to_upper()]
+		course_label_lbl.text = "COURSE %d | %s | PAR %d" % [course_num, custom_name.to_upper(), par]
 	else:
-		course_label_lbl.text = "COURSE %d" % course_num
+		course_label_lbl.text = "COURSE %d | PAR %d" % [course_num, par]
 	shot_counter_lbl.text = str(shots)
 
 	if animate_pop:
@@ -143,9 +163,3 @@ func hide_course_clear() -> void:
 	tw.set_parallel(true)
 	tw.tween_property(clear_banner, "modulate:a", 0.0, 0.2)
 	tw.tween_property(clear_banner, "scale", Vector2(0.92, 0.92), 0.2)
-
-func update_sound_icon(muted: bool) -> void:
-	if is_instance_valid(sound_btn):
-		sound_btn.icon = ICON_SOUND_OFF if muted else ICON_SOUND_ON
-		sound_btn.text = ""
-

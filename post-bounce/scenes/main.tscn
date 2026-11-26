@@ -26,10 +26,10 @@ color = Color(0.129, 0.173, 0.149, 1)
 
 [node name="Ball" parent="World" unique_id=681879848 instance=ExtResource("3_ball")]
 use_parent_material = true
-restitution = 1.87
-damping = 1.92
-linear_drag = 15.0
-stop_speed = 8.0
+restitution = 0.87
+damping = 1.05
+linear_drag = 32.0
+stop_speed = 12.0
 
 [node name="AimGuide" type="Node2D" parent="World" unique_id=2055266640]
 script = ExtResource("4_aim")

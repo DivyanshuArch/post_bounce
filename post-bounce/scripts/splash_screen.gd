@@ -33,20 +33,20 @@ func _start_splash_sequence() -> void:
 	tw.tween_property(logo, "scale", Vector2(1.04, 1.04), 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	await tw.finished
-	_go_to_main_menu()
+	_go_to_game()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if skipped:
 		return
 	if (event is InputEventKey and event.pressed) or (event is InputEventMouseButton and event.pressed) or (event is InputEventScreenTouch and event.pressed):
 		skipped = true
-		_go_to_main_menu()
+		_go_to_game()
 
-func _go_to_main_menu() -> void:
+func _go_to_game() -> void:
 	if skipped and get_tree().current_scene != self:
 		return
 	skipped = true
 	if SceneManager:
-		SceneManager.change_scene("res://scenes/main_menu.tscn", false, 0.35)
+		SceneManager.change_scene("res://scenes/main.tscn", true, 0.35)
 	else:
-		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+		get_tree().change_scene_to_file("res://scenes/loading_screen.tscn")

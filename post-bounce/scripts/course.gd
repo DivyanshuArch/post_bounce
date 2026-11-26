@@ -23,6 +23,9 @@ extends Node2D
 			generate_decorations(seed_int if seed_int != 0 else 12345)
 			queue_redraw()
 
+@export var par: int = 2
+
+
 @export var boundary_path: Path2D:
 	set(val):
 		if boundary_path and is_instance_valid(boundary_path) and boundary_path.curve:
@@ -212,6 +215,10 @@ func setup_from_def(def: Dictionary, seed_val: int) -> void:
 	course_name = def["name"]
 	if def.has("theme"):
 		theme = def["theme"]
+	if def.has("par"):
+		par = int(def["par"])
+	else:
+		par = 2 + (1 if def.get("diamonds", []).size() >= 2 else 0)
 	outer_poly = PackedVector2Array(def["outerPoly"])
 	start_position = def["start"]
 	_compute_bounds()

@@ -43,13 +43,15 @@ func _ready() -> void:
 
 	hud.reset_requested.connect(func(): load_course(current_course_index, false))
 	hud.retry_requested.connect(func(): load_course(current_course_index, false))
-	hud.skip_requested.connect(func(): load_course(current_course_index + 1, false))
-	hud.sound_toggled.connect(_on_sound_toggled)
-
+	hud.next_course_requested.connect(func(): load_course(current_course_index + 1, false))
+	hud.level_selected.connect(func(idx): load_course(idx, false))
 
 	get_viewport().size_changed.connect(_on_viewport_resized)
 
-	load_course(0, true)
+	var start_idx: int = 0
+	if GameSettings:
+		start_idx = maxi(0, GameSettings.get_newest_incomplete_level() - 1)
+	load_course(start_idx, true)
 
 func load_course(index: int, snap_cam: bool = false) -> void:
 	current_course_index = index
@@ -95,8 +97,9 @@ func load_course(index: int, snap_cam: bool = false) -> void:
 	if atmosphere and atmosphere.has_method("set_theme"):
 		atmosphere.set_theme(course.theme)
 
+	var course_par: int = course.par if course.par > 0 else CourseManager.get_course_par(index)
 	ball.reset_to(course.start_position)
-	hud.update_course_info(index + 1, shots_taken, false, course.course_name)
+	hud.update_course_info(index + 1, shots_taken, false, course.course_name, course_par)
 	hud.hide_course_clear()
 	hud.hide_out_of_bounds()
 
@@ -123,7 +126,7 @@ func _compute_camera_framing(snap: bool = false) -> void:
 func _on_viewport_resized() -> void:
 	_compute_camera_framing(false)
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if is_out_of_bounds:
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			load_course(current_course_index, false)
@@ -135,6 +138,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				load_course(current_course_index, false)
 				get_viewport().set_input_as_handled()
 				return
+
+func _unhandled_input(event: InputEvent) -> void:
+	if is_out_of_bounds:
 		return
 
 	if event is InputEventMouseButton:
@@ -166,10 +172,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		var k: InputEventKey = event
 		if k.keycode == KEY_R:
 			load_course(current_course_index, false)
-		elif k.keycode == KEY_ESCAPE:
-			aim_active = false
-			ball.set_aim_stretch(Vector2.ZERO, 0.0)
-			_update_aim_guide()
+		elif k.keycode in [KEY_ESCAPE, KEY_H]:
+			if aim_active:
+				aim_active = false
+				ball.set_aim_stretch(Vector2.ZERO, 0.0)
+				_update_aim_guide()
+			else:
+				hud.open_home_hub("SHOP")
 
 
 func _update_aim_vector() -> void:
@@ -206,7 +215,8 @@ func _release_shot() -> void:
 
 	ball.launch(aim_dir, launch_speed)
 	shots_taken += 1
-	hud.update_course_info(current_course_index + 1, shots_taken, true, course.course_name)
+	var course_par: int = course.par if course.par > 0 else CourseManager.get_course_par(current_course_index)
+	hud.update_course_info(current_course_index + 1, shots_taken, true, course.course_name, course_par)
 
 	SoundManager.play_shoot(aim_power)
 
@@ -216,17 +226,18 @@ func _release_shot() -> void:
 	hud.on_first_shot()
 
 func _physics_process(delta: float) -> void:
-	if ball.is_moving and not course_cleared:
-		var finish_data: Dictionary = course.finish_line.get_global_segment() if is_instance_valid(course.finish_line) else {}
-		ball.step_physics(delta, course.get_all_segments(), finish_data, course.diamonds, course)
+	if not course_cleared and not is_out_of_bounds:
+		if ball.is_moving:
+			var finish_data: Dictionary = course.finish_line.get_global_segment() if is_instance_valid(course.finish_line) else {}
+			ball.step_physics(delta, course.get_all_segments(), finish_data, course.diamonds, course)
+
+		# Absolute failsafe: if ball position is outside course boundary plus safety margin
+		if is_instance_valid(course):
+			var local_bpos: Vector2 = course.to_local(ball.global_position)
+			if not course.bounds.grow(140.0).has_point(local_bpos):
+				_on_ball_out_of_bounds()
 
 func _process(delta: float) -> void:
-	# Course clear countdown
-	if course_cleared:
-		clear_timer -= delta
-		if clear_timer <= 0.0:
-			load_course(current_course_index + 1, false)
-
 	# Camera smooth follow + framing
 	var follow_bias: float = 0.08
 	var desired_pos: Vector2 = course.bounds_center.lerp(ball.global_position, follow_bias)
@@ -256,11 +267,6 @@ func _process(delta: float) -> void:
 func add_trauma(amount: float) -> void:
 	trauma = clampf(trauma + amount, 0.0, 1.0)
 
-func trigger_hit_stop(duration_sec: float, time_scale_val: float = 0.05) -> void:
-	Engine.time_scale = time_scale_val
-	await get_tree().create_timer(duration_sec, true, false, true).timeout
-	Engine.time_scale = 1.0
-
 func _on_ball_bounced(c: Vector2, normal: Vector2, impact_speed: float, count: int) -> void:
 	# Juice 1: Squash ball against wall normal
 	ball.apply_impact_squash(normal, impact_speed)
@@ -270,23 +276,19 @@ func _on_ball_bounced(c: Vector2, normal: Vector2, impact_speed: float, count: i
 		SoundManager.play_bounce(impact_speed, count)
 		particle_manager.spawn_bounce_dust(c, normal, impact_speed)
 		var norm_speed: float = clampf(impact_speed / 800.0, 0.0, 1.0)
-		add_trauma(norm_speed * 0.45)
-
-		# Juice 3: Hit-stop on heavy crunch
-		if impact_speed > 400.0:
-			trigger_hit_stop(0.032, 0.06)
+		add_trauma(norm_speed * 0.35)
 
 func _on_diamond_hit(dm: Node2D) -> void:
+	if GameSettings:
+		GameSettings.add_gems(10)
 	SoundManager.play_diamond_chime()
 	particle_manager.spawn_diamond_burst(dm.global_position)
 	add_trauma(0.18)
-	trigger_hit_stop(0.025, 0.1)
 
 func _on_finish_reached() -> void:
 	if course_cleared:
 		return
 	course_cleared = true
-	clear_timer = 1.6
 
 	SoundManager.play_finish_fanfare()
 	particle_manager.spawn_finish_celebration(ball.global_position)
@@ -298,11 +300,37 @@ func _on_finish_reached() -> void:
 	tw.tween_property(Engine, "time_scale", 1.0, 0.45).set_trans(Tween.TRANS_SINE)
 
 	var collected_count: int = 0
+	var total_diamonds: int = 0
 	for d in course.diamonds:
-		if is_instance_valid(d) and d.is_collected:
-			collected_count += 1
+		if is_instance_valid(d):
+			total_diamonds += 1
+			if d.is_collected:
+				collected_count += 1
 
-	hud.show_course_clear(shots_taken, collected_count)
+	var course_par: int = course.par if course.par > 0 else CourseManager.get_course_par(current_course_index)
+
+	# Calculate stars & rewards
+	var star_count: int = 1
+	if shots_taken <= course_par:
+		star_count += 1
+	if total_diamonds > 0 and collected_count >= total_diamonds:
+		star_count += 1
+	elif total_diamonds == 0 and shots_taken <= course_par:
+		star_count = 3
+
+	var gems_earned: int = 15
+	if shots_taken == 1:
+		gems_earned += 30
+	elif shots_taken <= course_par:
+		gems_earned += 15
+	if total_diamonds > 0 and collected_count >= total_diamonds:
+		gems_earned += 20
+
+	if GameSettings:
+		GameSettings.add_gems(gems_earned)
+		GameSettings.record_level_completion(current_course_index + 1, shots_taken, star_count)
+
+	hud.show_victory_modal(current_course_index + 1, course.course_name, shots_taken, course_par, collected_count, total_diamonds)
 
 func _on_ball_out_of_bounds() -> void:
 	if course_cleared or is_out_of_bounds:
@@ -315,10 +343,8 @@ func _on_ball_out_of_bounds() -> void:
 	SoundManager.play_out_of_bounds()
 	particle_manager.spawn_out_of_bounds(ball.global_position)
 	add_trauma(0.55)
-	trigger_hit_stop(0.04, 0.05)
 	hud.show_out_of_bounds("The ball fell into the void")
 
 func _on_sound_toggled() -> void:
 	var muted: bool = SoundManager.toggle_mute()
 	hud.update_sound_icon(muted)
-
